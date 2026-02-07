@@ -17,7 +17,7 @@
   "license": "proprietary",
   "autoload": {
     "psr-4": {
-      "Pantono\\Cart": "src/"
+      "Pantono\\Cart\\": "src/"
     }
   },
   "authors": [
