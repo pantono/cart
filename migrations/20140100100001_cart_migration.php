@@ -89,7 +89,7 @@ final class CartMigration extends BasePantonoMigration
             ->addColumn('min_weight', 'float')
             ->addColumn('max_weight', 'float')
             ->addColumn('priority', 'integer')
-            ->addLinkedColumn('vat_rate_id', 'vat_rate', 'id')
+            ->addLinkedColumn('vat_rate_id', $this->addTablePrefix('product_vat_rate'), 'id')
             ->create();
 
         $this->table($this->addTablePrefix('cart'))
