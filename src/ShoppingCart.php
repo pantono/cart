@@ -10,6 +10,7 @@ use Pantono\Cart\Event\PreCartSaveEvent;
 use Pantono\Cart\Event\PostCartSaveEvent;
 use Pantono\Cart\Model\CartItem;
 use Pantono\Products\Model\SpecialOffer;
+use Pantono\Authentication\Model\User;
 
 class ShoppingCart
 {
@@ -27,6 +28,21 @@ class ShoppingCart
     public function getActiveCartForSession(string $sessionId): ?Cart
     {
         return $this->hydrator->hydrate(Cart::class, $this->repository->getActiveCartForSession($sessionId));
+    }
+
+    public function getOrCreateCartForSession(string $sessionId, ?User $user = null): Cart
+    {
+        $cart = $this->getActiveCartForSession($sessionId);
+        if (!$cart) {
+            $cart = new Cart();
+            $cart->setSessionId($sessionId);
+            $cart->setDateUpdated(new \DateTime);
+            $cart->setDateCreated(new \DateTime);
+            if ($user) {
+                $cart->setUser($user);
+            }
+        }
+        return $cart;
     }
 
     /**
