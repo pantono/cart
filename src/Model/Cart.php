@@ -197,11 +197,13 @@ class Cart implements SavableInterface
         if ($product->getStockHolding() < $quantity) {
             return null;
         }
+        $items = $this->getItems();
         $item = new CartItem();
         $item->setDateAdded(new \DateTime);
         $item->setQuantity($quantity);
         $item->setProduct($product);
-        $this->items[] = $item;
+        $items[] = $item;
+        $this->setItems($items);
         return $item;
     }
 
