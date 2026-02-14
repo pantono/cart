@@ -11,7 +11,7 @@
     "pantono/core": "^1.0",
     "pantono/products": "^1.0",
     "pantono/locations": "^1.0",
-    "pantono/payments": "^0.0.21",
+    "pantono/payments": "^1.0",
     "pantono/customers": "^1.0"
   },
   "require-dev": {
