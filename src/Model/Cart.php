@@ -191,8 +191,8 @@ class Cart implements SavableInterface
                     return null;
                 }
                 $item->setQuantity($quantity);
+                return $item;
             }
-            return $item;
         }
         if ($product->getStockHolding() < $quantity) {
             return null;
