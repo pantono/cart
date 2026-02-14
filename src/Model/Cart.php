@@ -41,12 +41,12 @@ class Cart implements SavableInterface
     /**
      * @var Payment[]
      */
-    #[Locator(serviceName: ShoppingCart::class, methodName: 'getPaymentsForCart')]
+    #[Locator(methodName: 'getPaymentsForCart', className: ShoppingCart::class)]
     private array $payments = [];
     /**
      * @var DiscountCode[]
      */
-    #[Locator(serviceName: ShoppingCart::class, methodName: 'getCodesForCart')]
+    #[Locator(methodName: 'getCodesForCart', className: ShoppingCart::class)]
     private array $codes = [];
 
     public function getId(): ?int
