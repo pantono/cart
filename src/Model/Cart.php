@@ -14,6 +14,7 @@ use Pantono\Products\Model\DiscountCode;
 use Pantono\Payments\Model\Payment;
 use Pantono\Products\Model\Product;
 use Pantono\Locations\Model\Country;
+use Pantono\Contracts\Attributes\FieldName;
 
 #[DatabaseTable('cart')]
 class Cart implements SavableInterface
@@ -24,13 +25,13 @@ class Cart implements SavableInterface
     private string $sessionId;
     private \DateTimeInterface $dateCreated;
     private \DateTimeInterface $dateUpdated;
-    #[OneToOne(targetModel: DeliverySpeed::class)]
+    #[OneToOne(targetModel: DeliverySpeed::class), FieldName('delivery_speed_id')]
     private ?DeliverySpeed $deliverySpeed = null;
-    #[OneToOne(targetModel: DeliveryType::class)]
+    #[OneToOne(targetModel: DeliveryType::class), FieldName('delivery_type_id')]
     private ?DeliveryType $deliveryType = null;
-    #[OneToOne(targetModel: User::class)]
+    #[OneToOne(targetModel: User::class), FieldName('user_id')]
     private ?User $user = null;
-    #[OneToOne(targetModel: Country::class)]
+    #[OneToOne(targetModel: Country::class), FieldName('country_id')]
     private ?Country $country = null;
     /**
      * @var CartItem[]
