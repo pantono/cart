@@ -50,6 +50,9 @@ class ShoppingCartRepository extends DefaultRepository
      */
     public function getActiveSpecialOffersForProduct(int $productId, ?\DateTimeInterface $date = null): array
     {
+        if (!$date) {
+            $date = new \DateTime();
+        }
         $select = $this->getDb()->select()->from($this->appendTablePrefix('special_offer_product'), [])
             ->joinInner($this->appendTablePrefix('special_offer'), $this->appendTablePrefix('special_offer_product') . '.offer_id=' . $this->appendTablePrefix('special_offers') . '.id')
             ->where($this->appendTablePrefix('special_offer') . '.start_date <= ?', $date->format('Y-m-d H:i:s'))
