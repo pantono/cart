@@ -24,6 +24,7 @@ class ShoppingCartRepository extends DefaultRepository
         $this->saveModel($cart);
         $itemIds = [];
         foreach ($cart->getItems() as $item) {
+            $item->setCartId($cart->getId());
             $this->saveModel($item);
             $itemIds[] = $item->getId();
         }
