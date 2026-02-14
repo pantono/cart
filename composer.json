@@ -8,7 +8,11 @@
     "pantono/utilities": "^1.0",
     "pantono/phinx": "^0.16",
     "pantono/database": "^1.0",
-    "pantono/core": "^1.0"
+    "pantono/core": "^1.0",
+    "pantono/products": "^1.0",
+    "pantono/locations": "^1.0",
+    "pantono/payments": "^0.0.21",
+    "pantono/customers": "^1.0"
   },
   "require-dev": {
     "phpunit/phpunit": "^12",
@@ -25,5 +29,10 @@
       "name": "Chris Burton",
       "email": "chris@chris-burton.co.uk"
     }
-  ]
+  ],
+  "config": {
+    "allow-plugins": {
+      "php-http/discovery": true
+    }
+  }
 }

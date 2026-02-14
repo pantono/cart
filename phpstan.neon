@@ -8,7 +8,6 @@ parameters:
     - "*/Tests/*"
   ignoreErrors:
     - message: '#^Method (.*)::(.*) has parameter (.*) with no value type specified in iterable type array.$#'
-    - message: '#^Property (.*)::(.*) type has no value type specified in iterable type array.$#'
 
 services:
   - class: Pantono\Hydrator\Rules\PhpStan\LocatorMethodExistsRule
