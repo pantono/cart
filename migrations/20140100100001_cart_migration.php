@@ -98,7 +98,7 @@ final class CartMigration extends BasePantonoMigration
             ->addColumn('date_created', 'datetime')
             ->addLinkedColumn('delivery_type_id', $this->addTablePrefix('delivery_type'), 'id', ['null' => true])
             ->addLinkedColumn('delivery_speed_id', $this->addTablePrefix('delivery_speed'), 'id', ['null' => true])
-            ->addLinkedColumn('user_id', $this->addTablePrefix('users'), 'id', ['null' => true])
+            ->addLinkedColumn('user_id', $this->addTablePrefix('user'), 'id', ['null' => true])
             ->addLinkedColumn('country_id', 'country', 'id', ['null' => true])
             ->addForeignKey('session_id', $this->addTablePrefix('sessions'), 'sess_id')
             ->addLinkedColumn('order_id', $this->addTablePrefix('order'), 'id', ['null' => true])
@@ -106,7 +106,7 @@ final class CartMigration extends BasePantonoMigration
 
         $this->table($this->addTablePrefix('cart_code'), ['id' => false])
             ->addLinkedColumn('cart_id', $this->addTablePrefix('cart'), 'id')
-            ->addLinkedColumn('code_id', $this->addTablePrefix('codes'), 'id')
+            ->addLinkedColumn('code_id', $this->addTablePrefix('discount_code'), 'id')
             ->addColumn('date_added', 'datetime')
             ->create();
 
