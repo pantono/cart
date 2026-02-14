@@ -24,7 +24,7 @@ class ShoppingCart
         $this->dispatcher = $dispatcher;
     }
 
-    public function getActiveCartForSession(string $sessionId): Cart
+    public function getActiveCartForSession(string $sessionId): ?Cart
     {
         return $this->hydrator->hydrate(Cart::class, $this->repository->getActiveCartForSession($sessionId));
     }
