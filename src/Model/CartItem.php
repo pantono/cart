@@ -27,7 +27,7 @@ class CartItem implements SavableInterface
     /**
      * @var SpecialOffer[]
      */
-    #[Locator(serviceName: ShoppingCart::class, methodName: 'getActiveSpecialOffersForCartItem'), FieldName('$this'), Lazy]
+    #[Locator(className: ShoppingCart::class, methodName: 'getActiveSpecialOffersForCartItem'), FieldName('$this'), Lazy]
     private array $specialOffers = [];
 
     public function getId(): ?int
