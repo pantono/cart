@@ -201,6 +201,7 @@ class Cart implements SavableInterface
         $item->setDateAdded(new \DateTime);
         $item->setQuantity($quantity);
         $item->setProduct($product);
+        $this->items[] = $item;
         return $item;
     }
 
