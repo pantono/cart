@@ -3,6 +3,7 @@
 namespace Pantono\Cart\Model;
 
 use Pantono\Contracts\Attributes\DatabaseTable;
+use Pantono\Contracts\Attributes\Database\OneToMany;
 
 #[DatabaseTable('delivery_speed')]
 class DeliverySpeed
@@ -10,6 +11,8 @@ class DeliverySpeed
     private ?int $id = null;
     private string $name;
     private bool $live;
+    #[OneToMany(targetModel: DeliveryCost::class, mappedBy: 'speed_id')]
+    private array $costs = [];
 
     public function getId(): ?int
     {
@@ -39,5 +42,15 @@ class DeliverySpeed
     public function setLive(bool $live): void
     {
         $this->live = $live;
+    }
+
+    public function getCosts(): array
+    {
+        return $this->costs;
+    }
+
+    public function setCosts(array $costs): void
+    {
+        $this->costs = $costs;
     }
 }

@@ -263,18 +263,16 @@ class Cart implements SavableInterface
 
     public function getDeliveryCost(): ?DeliveryCost
     {
-        if (!$this->getDeliveryType()) {
-            return null;
-        }
-        if (!$this->getCountry()) {
+        if (!$this->getShippingLocation() || !$this->getShippingLocation()->getCountry()) {
             return null;
         }
         if (!$this->getDeliverySpeed()) {
             return null;
         }
+        $country = $this->getShippingLocation()->getCountry();
         return array_find(
-            $this->getDeliveryType()->getCosts(),
-            fn($cost) => $cost->getCountry()->getId() === $this->getCountry()->getId() && $cost->getSpeed()->getId() === $this->getDeliverySpeed()->getId()
+            $this->getDeliverySpeed()->getCosts(),
+            fn($cost) => $cost->getCountry()->getId() === $country->getId() && $cost->getSpeed()->getId() === $this->getDeliverySpeed()->getId()
         );
     }
 
