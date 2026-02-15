@@ -55,6 +55,7 @@ class ShoppingCart
                     }
                 }
             }
+            $this->saveCart($cart);
         }
         return $cart;
     }
