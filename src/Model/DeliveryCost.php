@@ -7,10 +7,14 @@ use Pantono\Locations\Model\Country;
 use Pantono\Contracts\Attributes\Database\OneToOne;
 use Pantono\Contracts\Attributes\FieldName;
 use Pantono\Products\Model\ProductVatRate;
+use Pantono\Contracts\Application\Interfaces\SavableInterface;
+use Pantono\Database\Traits\SavableModel;
 
 #[DatabaseTable('delivery_cost')]
-class DeliveryCost
+class DeliveryCost implements SavableInterface
 {
+    use SavableModel;
+
     private ?int $id = null;
     private int $typeId;
     #[OneToOne(targetModel: DeliverySpeed::class), FieldName('speed_id')]

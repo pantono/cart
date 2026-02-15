@@ -15,6 +15,14 @@ use Pantono\Customers\Customers;
 use Pantono\Cart\Model\CartCode;
 use Pantono\Payments\Model\Payment;
 use Pantono\Cart\Model\DeliverySpeed;
+use Pantono\Cart\Model\DeliveryCost;
+use Pantono\Cart\Model\DeliveryEstimate;
+use Pantono\Cart\Event\PreDeliverySpeedSaveEvent;
+use Pantono\Cart\Event\PostDeliverySpeedSaveEvent;
+use Pantono\Cart\Event\PreDeliveryCostSaveEvent;
+use Pantono\Cart\Event\PostDeliveryCostSaveEvent;
+use Pantono\Cart\Event\PreDeliveryEstimateSaveEvent;
+use Pantono\Cart\Event\PostDeliveryEstimateSaveEvent;
 
 class ShoppingCart
 {
@@ -118,6 +126,54 @@ class ShoppingCart
     public function getActiveSpeeds(): array
     {
         return $this->hydrator->hydrateSet(DeliverySpeed::class, $this->repository->getActiveSpeeds());
+    }
+
+    public function saveDeliverySpeed(DeliverySpeed $speed): void
+    {
+        $previous = $speed->getId() ? $this->hydrator->lookupRecord(DeliverySpeed::class, $speed->getId()) : null;
+        $event = new PreDeliverySpeedSaveEvent();
+        $event->setCurrent($speed);
+        $event->setPrevious($previous);
+        $this->dispatcher->dispatch($event);
+
+        $this->repository->saveModel($speed);
+
+        $event = new PostDeliverySpeedSaveEvent();
+        $event->setCurrent($speed);
+        $event->setPrevious($previous);
+        $this->dispatcher->dispatch($event);
+    }
+
+    public function saveDeliveryCost(DeliveryCost $cost): void
+    {
+        $previous = $cost->getId() ? $this->hydrator->lookupRecord(DeliveryCost::class, $cost->getId()) : null;
+        $event = new PreDeliveryCostSaveEvent();
+        $event->setCurrent($cost);
+        $event->setPrevious($previous);
+        $this->dispatcher->dispatch($event);
+
+        $this->repository->saveModel($cost);
+
+        $event = new PostDeliveryCostSaveEvent();
+        $event->setCurrent($cost);
+        $event->setPrevious($previous);
+        $this->dispatcher->dispatch($event);
+    }
+
+    public function saveDeliveryEstimate(DeliveryEstimate $estimate): void
+    {
+        $previous = $estimate->getId() ? $this->hydrator->lookupRecord(DeliveryEstimate::class, $estimate->getId()) : null;
+        $event = new PreDeliveryEstimateSaveEvent();
+        $event->setCurrent($estimate);
+        $event->setPrevious($previous);
+        $this->dispatcher->dispatch($event);
+
+        $this->repository->saveModel($estimate);
+
+        $event = new PostDeliveryEstimateSaveEvent();
+        $event->setCurrent($estimate);
+        $event->setPrevious($previous);
+        $this->dispatcher->dispatch($event);
     }
 
     public function saveCart(Cart $cart): void

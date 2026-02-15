@@ -6,10 +6,13 @@ use Pantono\Contracts\Attributes\DatabaseTable;
 use Pantono\Contracts\Attributes\Database\OneToOne;
 use Pantono\Locations\Model\Country;
 use Pantono\Contracts\Attributes\FieldName;
+use Pantono\Contracts\Application\Interfaces\SavableInterface;
+use Pantono\Database\Traits\SavableModel;
 
 #[DatabaseTable('delivery_estimate')]
-class DeliveryEstimate
+class DeliveryEstimate implements SavableInterface
 {
+    use SavableModel;
     private ?int $id = null;
     #[OneToOne(targetModel: DeliverySpeed::class)]
     private ?DeliverySpeed $deliverySpeed = null;

@@ -4,10 +4,14 @@ namespace Pantono\Cart\Model;
 
 use Pantono\Contracts\Attributes\DatabaseTable;
 use Pantono\Contracts\Attributes\Database\OneToMany;
+use Pantono\Contracts\Application\Interfaces\SavableInterface;
+use Pantono\Database\Traits\SavableModel;
 
 #[DatabaseTable('delivery_speed')]
-class DeliverySpeed
+class DeliverySpeed implements SavableInterface
 {
+    use SavableModel;
+
     private ?int $id = null;
     private string $name;
     private bool $live;
