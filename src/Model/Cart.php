@@ -15,6 +15,7 @@ use Pantono\Payments\Model\Payment;
 use Pantono\Products\Model\Product;
 use Pantono\Contracts\Attributes\FieldName;
 use Pantono\Locations\Model\Location;
+use Pantono\Cart\Exception\NotEnoughStock;
 
 #[DatabaseTable('cart')]
 class Cart implements SavableInterface
@@ -190,22 +191,22 @@ class Cart implements SavableInterface
         return true;
     }
 
-    public function addProduct(Product $product, int $quantity): ?CartItem
+    public function addProduct(Product $product, int $quantity): CartItem
     {
         foreach ($this->getItems() as $item) {
             if ($item->getProduct()->getId() === $product->getId()) {
                 if ($item->getQuantity() + $quantity > $product->getStockHolding()) {
+                    throw new NotEnoughStock('Not enough stock to add ' . $quantity . ' to cart');
                     /**
                      * Don't update quantity if an item will be out of stock
                      */
-                    return null;
                 }
                 $item->setQuantity($quantity);
                 return $item;
             }
         }
         if ($product->getStockHolding() < $quantity) {
-            return null;
+            throw new NotEnoughStock('Not enough stock to add ' . $quantity . ' to cart');
         }
         $items = $this->getItems();
         $item = new CartItem();
