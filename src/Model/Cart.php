@@ -229,6 +229,15 @@ class Cart implements SavableInterface
         $this->setItems($items);
     }
 
+    public function getTotalWeight(): float
+    {
+        $weight = 0;
+        foreach ($this->getItems() as $item) {
+            $weight += $item->getProduct()->getPublishedDraft()->getWeight();
+        }
+        return $weight;
+    }
+
     public function getItemTotalNet(): float
     {
         $total = 0;

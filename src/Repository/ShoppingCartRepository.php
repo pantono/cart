@@ -83,4 +83,9 @@ class ShoppingCartRepository extends DefaultRepository
 
         return $this->getDb()->fetchAll($select);
     }
+
+    public function getActiveSpeeds(): array
+    {
+        return $this->selectRowsByValues($this->appendTablePrefix('delivery_speed'), ['live' => 1]);
+    }
 }

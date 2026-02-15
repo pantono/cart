@@ -13,8 +13,8 @@ use Pantono\Products\Model\SpecialOffer;
 use Pantono\Authentication\Model\User;
 use Pantono\Customers\Customers;
 use Pantono\Cart\Model\CartCode;
-use Pantono\Cart\Model\CartPayment;
 use Pantono\Payments\Model\Payment;
+use Pantono\Cart\Model\DeliverySpeed;
 
 class ShoppingCart
 {
@@ -87,6 +87,37 @@ class ShoppingCart
     public function getPaymentsForCart(Cart $cart): array
     {
         return $this->hydrator->hydrateSet(Payment::class, $this->repository->getPaymentsForCart($cart));
+    }
+
+    /**
+     * @param Cart $cart
+     * @return DeliverySpeed[]
+     */
+    public function getAvailableSpeedsForCart(Cart $cart): array
+    {
+        $speeds = [];
+        $weight = $cart->getTotalWeight();
+        foreach ($this->getActiveSpeeds() as $speed) {
+            $available = false;
+            foreach ($speed->getCosts() as $cost) {
+                if ($cost->getMinWeight() > $weight && $cost->getMaxWeight() <= $weight) {
+                    $available = true;
+                }
+            }
+            if ($available) {
+                $speed[] = $speed;
+            }
+        }
+        return $speeds;
+    }
+
+
+    /**
+     * @return DeliverySpeed[]
+     */
+    public function getActiveSpeeds(): array
+    {
+        return $this->hydrator->hydrateSet(DeliverySpeed::class, $this->repository->getActiveSpeeds());
     }
 
     public function saveCart(Cart $cart): void
