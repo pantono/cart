@@ -12,6 +12,9 @@ use Pantono\Cart\Model\CartItem;
 use Pantono\Products\Model\SpecialOffer;
 use Pantono\Authentication\Model\User;
 use Pantono\Customers\Customers;
+use Pantono\Cart\Model\CartCode;
+use Pantono\Cart\Model\CartPayment;
+use Pantono\Payments\Model\Payment;
 
 class ShoppingCart
 {
@@ -66,6 +69,24 @@ class ShoppingCart
     public function getActiveSpecialOffersForCartItem(CartItem $cartItem): array
     {
         return $this->hydrator->hydrateSet(SpecialOffer::class, $this->repository->getActiveSpecialOffersForProduct($cartItem->getProduct()->getId()));
+    }
+
+    /**
+     * @param Cart $cart
+     * @return CartCode[]
+     */
+    public function getCodesForCart(Cart $cart): array
+    {
+        return $this->hydrator->hydrateSet(CartCode::class, $this->repository->getCodesForCart($cart));
+    }
+
+    /**
+     * @param Cart $cart
+     * @return Payment[]
+     */
+    public function getPaymentsForCart(Cart $cart): array
+    {
+        return $this->hydrator->hydrateSet(Payment::class, $this->repository->getPaymentsForCart($cart));
     }
 
     public function saveCart(Cart $cart): void

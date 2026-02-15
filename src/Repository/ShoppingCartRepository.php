@@ -61,4 +61,26 @@ class ShoppingCartRepository extends DefaultRepository
 
         return $this->getDb()->fetchAll($select);
     }
+
+    /**
+     * @param Cart $cart
+     * @return array<int, mixed>
+     */
+    public function getCodesForCart(Cart $cart): array
+    {
+        return $this->selectRowsByValues('cart_code', ['cart_id' => $cart->getId()]);
+    }
+
+    /**
+     * @param Cart $cart
+     * @return array<int, mixed>
+     */
+    public function getPaymentsForCart(Cart $cart): array
+    {
+        $select = $this->getDb()->select()->from($this->appendTablePrefix('cart_payment'), [])
+            ->joinInner($this->appendTablePrefix('payment'), $this->appendTablePrefix('cart_payment') . '.payment_id=' . $this->appendTablePrefix('payment') . '.id')
+            ->where($this->appendTablePrefix('cart_payment') . '.cart_id=?', $cart->getId());
+
+        return $this->getDb()->fetchAll($select);
+    }
 }

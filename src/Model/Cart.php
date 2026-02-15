@@ -44,7 +44,7 @@ class Cart implements SavableInterface
     #[Locator(methodName: 'getPaymentsForCart', className: ShoppingCart::class)]
     private array $payments = [];
     /**
-     * @var DiscountCode[]
+     * @var CartCode[]
      */
     #[Locator(methodName: 'getCodesForCart', className: ShoppingCart::class)]
     private array $codes = [];
@@ -156,7 +156,7 @@ class Cart implements SavableInterface
     }
 
     /**
-     * @return DiscountCode[]
+     * @return CartCode[]
      */
     public function getCodes(): array
     {
@@ -170,13 +170,23 @@ class Cart implements SavableInterface
 
     public function addCode(DiscountCode $code): bool
     {
+        foreach ($this->getCodes() as $cartCode) {
+            if ($code->getDiscount()->getId() === $cartCode->getCode()->getDiscount()->getId()) {
+                return false;
+            }
+        }
         if ($code->getStartDate() && $code->getStartDate() > new \DateTime) {
             return false;
         }
         if ($code->getEndDate() && $code->getEndDate() < new \DateTime) {
             return false;
         }
-        $this->codes[] = $code;
+        $codes = $this->getCodes();
+        $cartCode = new CartCode();
+        $cartCode->setCode($code);
+        $cartCode->setDateAdded(new \DateTime);
+        $codes[] = $cartCode;
+        $this->setCodes($codes);
         return true;
     }
 
@@ -292,9 +302,9 @@ class Cart implements SavableInterface
     {
         $lineItems = [];
         foreach ($this->getCodes() as $code) {
-            $discount = $code->getDiscount();
+            $discount = $code->getCode()->getDiscount();
             if ($discount->getBase()->isFreeDelivery()) {
-                $lineItems[] = ['name' => 'Free Delivery (' . $code->getCode() . ')', 'amount' => $this->getShippingCostNet()];
+                $lineItems[] = ['name' => 'Free Delivery (' . $code->getCode()->getCode() . ')', 'amount' => $this->getShippingCostNet()];
             }
             if ($discount->getBase()->isPercentage()) {
                 $net = $this->getItemTotalNet();

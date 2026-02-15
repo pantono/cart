@@ -11,6 +11,9 @@ class DeliverySpeed
     private ?int $id = null;
     private string $name;
     private bool $live;
+    /**
+     * @var DeliveryCost[]
+     */
     #[OneToMany(targetModel: DeliveryCost::class, mappedBy: 'speed_id')]
     private array $costs = [];
 
@@ -44,6 +47,9 @@ class DeliverySpeed
         $this->live = $live;
     }
 
+    /**
+     * @return DeliveryCost[]
+     */
     public function getCosts(): array
     {
         return $this->costs;
