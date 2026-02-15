@@ -16,7 +16,6 @@ class DeliveryCost implements SavableInterface
     use SavableModel;
 
     private ?int $id = null;
-    private int $typeId;
     #[OneToOne(targetModel: DeliverySpeed::class), FieldName('speed_id')]
     private ?DeliverySpeed $speed;
     #[OneToOne(targetModel: Country::class), FieldName('country_id')]
@@ -36,16 +35,6 @@ class DeliveryCost implements SavableInterface
     public function setId(?int $id): void
     {
         $this->id = $id;
-    }
-
-    public function getTypeId(): int
-    {
-        return $this->typeId;
-    }
-
-    public function setTypeId(int $typeId): void
-    {
-        $this->typeId = $typeId;
     }
 
     public function getSpeed(): ?DeliverySpeed
