@@ -232,7 +232,7 @@ class Cart implements SavableInterface
     public function getItemTotalNet(): float
     {
         $total = 0;
-        foreach ($this->items as $item) {
+        foreach ($this->getItems() as $item) {
             $total += $item->getProduct()->getPublishedDraft()->getPrice() * $item->getQuantity();
         }
         return $total;
@@ -241,7 +241,7 @@ class Cart implements SavableInterface
     public function getItemTotalGross(): float
     {
         $total = 0;
-        foreach ($this->items as $item) {
+        foreach ($this->getItems() as $item) {
             $version = $item->getProduct()->getPublishedDraft();
             $total += $version->getVatRate()->addToPrice($version->getPrice()) * $item->getQuantity();
         }
