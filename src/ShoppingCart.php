@@ -11,18 +11,21 @@ use Pantono\Cart\Event\PostCartSaveEvent;
 use Pantono\Cart\Model\CartItem;
 use Pantono\Products\Model\SpecialOffer;
 use Pantono\Authentication\Model\User;
+use Pantono\Customers\Customers;
 
 class ShoppingCart
 {
     private ShoppingCartRepository $repository;
     private Hydrator $hydrator;
     private EventDispatcher $dispatcher;
+    private Customers $customers;
 
-    public function __construct(ShoppingCartRepository $repository, Hydrator $hydrator, EventDispatcher $dispatcher)
+    public function __construct(ShoppingCartRepository $repository, Hydrator $hydrator, EventDispatcher $dispatcher, Customers $customers)
     {
         $this->repository = $repository;
         $this->hydrator = $hydrator;
         $this->dispatcher = $dispatcher;
+        $this->customers = $customers;
     }
 
     public function getActiveCartForSession(string $sessionId): ?Cart
@@ -40,6 +43,17 @@ class ShoppingCart
             $cart->setDateCreated(new \DateTime);
             if ($user) {
                 $cart->setUser($user);
+                $customer = $this->customers->getCustomerByUserId($user->getId());
+                if ($customer) {
+                    foreach ($customer->getLocations() as $location) {
+                        if ($location->isDefaultBilling()) {
+                            $cart->setBillingLocation($location);
+                        }
+                        if ($location->isDefaultShipping()) {
+                            $cart->setShippingLocation($location);
+                        }
+                    }
+                }
             }
         }
         return $cart;
