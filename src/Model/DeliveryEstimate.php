@@ -4,6 +4,8 @@ namespace Pantono\Cart\Model;
 
 use Pantono\Contracts\Attributes\DatabaseTable;
 use Pantono\Contracts\Attributes\Database\OneToOne;
+use Pantono\Locations\Model\Country;
+use Pantono\Contracts\Attributes\FieldName;
 
 #[DatabaseTable('delivery_estimate')]
 class DeliveryEstimate
@@ -11,8 +13,8 @@ class DeliveryEstimate
     private ?int $id = null;
     #[OneToOne(targetModel: DeliverySpeed::class)]
     private ?DeliverySpeed $deliverySpeed = null;
-    #[OneToOne(targetModel: DeliveryType::class)]
-    private ?DeliveryType $deliveryType = null;
+    #[OneToOne(targetModel: Country::class), FieldName('country_id')]
+    private ?Country $country = null;
     private int $orderDay;
     private int $deliveryTime;
     private \DateTimeInterface $timeCutoff;
@@ -37,14 +39,14 @@ class DeliveryEstimate
         $this->deliverySpeed = $deliverySpeed;
     }
 
-    public function getDeliveryType(): ?DeliveryType
+    public function getCountry(): ?Country
     {
-        return $this->deliveryType;
+        return $this->country;
     }
 
-    public function setDeliveryType(?DeliveryType $deliveryType): void
+    public function setCountry(?Country $country): void
     {
-        $this->deliveryType = $deliveryType;
+        $this->country = $country;
     }
 
     public function getOrderDay(): int

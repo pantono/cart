@@ -13,8 +13,8 @@ use Pantono\Cart\ShoppingCart;
 use Pantono\Products\Model\DiscountCode;
 use Pantono\Payments\Model\Payment;
 use Pantono\Products\Model\Product;
-use Pantono\Locations\Model\Country;
 use Pantono\Contracts\Attributes\FieldName;
+use Pantono\Locations\Model\Location;
 
 #[DatabaseTable('cart')]
 class Cart implements SavableInterface
@@ -27,12 +27,12 @@ class Cart implements SavableInterface
     private \DateTimeInterface $dateUpdated;
     #[OneToOne(targetModel: DeliverySpeed::class), FieldName('delivery_speed_id')]
     private ?DeliverySpeed $deliverySpeed = null;
-    #[OneToOne(targetModel: DeliveryType::class), FieldName('delivery_type_id')]
-    private ?DeliveryType $deliveryType = null;
     #[OneToOne(targetModel: User::class), FieldName('user_id')]
     private ?User $user = null;
-    #[OneToOne(targetModel: Country::class), FieldName('country_id')]
-    private ?Country $country = null;
+    #[OneToOne(targetModel: Location::class), FieldName('shipping_location_id')]
+    private ?Location $shippingLocation = null;
+    #[OneToOne(targetModel: Location::class), FieldName('billing_location_id')]
+    private ?Location $billingLocation = null;
     /**
      * @var CartItem[]
      */
@@ -99,16 +99,6 @@ class Cart implements SavableInterface
         $this->deliverySpeed = $deliverySpeed;
     }
 
-    public function getDeliveryType(): ?DeliveryType
-    {
-        return $this->deliveryType;
-    }
-
-    public function setDeliveryType(?DeliveryType $deliveryType): void
-    {
-        $this->deliveryType = $deliveryType;
-    }
-
     public function getUser(): ?User
     {
         return $this->user;
@@ -119,14 +109,24 @@ class Cart implements SavableInterface
         $this->user = $user;
     }
 
-    public function getCountry(): ?Country
+    public function getShippingLocation(): ?Location
     {
-        return $this->country;
+        return $this->shippingLocation;
     }
 
-    public function setCountry(?Country $country): void
+    public function setShippingLocation(?Location $shippingLocation): void
     {
-        $this->country = $country;
+        $this->shippingLocation = $shippingLocation;
+    }
+
+    public function getBillingLocation(): ?Location
+    {
+        return $this->billingLocation;
+    }
+
+    public function setBillingLocation(?Location $billingLocation): void
+    {
+        $this->billingLocation = $billingLocation;
     }
 
     /**

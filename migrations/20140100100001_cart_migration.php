@@ -68,21 +68,15 @@ final class CartMigration extends BasePantonoMigration
             ->addColumn('live', 'boolean')
             ->create();
 
-        $this->table($this->addTablePrefix('delivery_type'))
-            ->addColumn('name', 'string')
-            ->addColumn('live', 'boolean')
-            ->create();
-
         $this->table($this->addTablePrefix('delivery_estimate'))
-            ->addLinkedColumn('type_id', $this->addTablePrefix('delivery_type'), 'id')
             ->addLinkedColumn('speed_id', $this->addTablePrefix('delivery_speed'), 'id')
+            ->addLinkedColumn('country_id', $this->addTablePrefix('country'), 'id')
             ->addColumn('order_day', 'integer')
             ->addColumn('delivery_day', 'integer')
             ->addColumn('cutoff', 'time')
             ->create();
 
         $this->table($this->addTablePrefix('delivery_cost'))
-            ->addLinkedColumn('type_id', $this->addTablePrefix('delivery_type'), 'id')
             ->addLinkedColumn('speed_id', $this->addTablePrefix('delivery_speed'), 'id')
             ->addLinkedColumn('country_id', $this->addTablePrefix('country'), 'id')
             ->addColumn('cost', 'decimal')
@@ -96,11 +90,11 @@ final class CartMigration extends BasePantonoMigration
             ->addColumn('session_id', 'string')
             ->addColumn('date_updated', 'datetime')
             ->addColumn('date_created', 'datetime')
-            ->addLinkedColumn('delivery_type_id', $this->addTablePrefix('delivery_type'), 'id', ['null' => true])
             ->addLinkedColumn('delivery_speed_id', $this->addTablePrefix('delivery_speed'), 'id', ['null' => true])
             ->addLinkedColumn('user_id', $this->addTablePrefix('user'), 'id', ['null' => true])
-            ->addLinkedColumn('country_id', 'country', 'id', ['null' => true])
-            ->addForeignKey('session_id', $this->addTablePrefix('sessions'), 'sess_id')
+            ->addLinkedColumn('shipping_location_id', 'location', 'id', ['null' => true])
+            ->addLinkedColumn('billing_location_id', 'location', 'id', ['null' => true])
+            ->addIndex('session_id')
             ->addLinkedColumn('order_id', $this->addTablePrefix('order'), 'id', ['null' => true])
             ->create();
 
