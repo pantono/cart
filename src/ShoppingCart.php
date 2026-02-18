@@ -58,10 +58,10 @@ class ShoppingCart
                 if ($customer) {
                     foreach ($customer->getLocations() as $location) {
                         if ($location->isDefaultBilling()) {
-                            $cart->setBillingLocation($location);
+                            $cart->setBillingLocation($location->getLocation());
                         }
                         if ($location->isDefaultShipping()) {
-                            $cart->setShippingLocation($location);
+                            $cart->setShippingLocation($location->getLocation());
                         }
                     }
                 }
