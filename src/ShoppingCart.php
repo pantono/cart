@@ -113,7 +113,7 @@ class ShoppingCart
                 }
             }
             if ($available) {
-                $speed[] = $speed;
+                $speeds[] = $speed;
             }
         }
         return $speeds;
