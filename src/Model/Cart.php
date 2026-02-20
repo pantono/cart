@@ -16,6 +16,7 @@ use Pantono\Products\Model\Product;
 use Pantono\Contracts\Attributes\FieldName;
 use Pantono\Locations\Model\Location;
 use Pantono\Cart\Exception\NotEnoughStock;
+use Pantono\Contracts\Attributes\Lazy;
 
 #[DatabaseTable('cart')]
 class Cart implements SavableInterface
@@ -42,13 +43,15 @@ class Cart implements SavableInterface
     /**
      * @var Payment[]
      */
-    #[Locator(methodName: 'getPaymentsForCart', className: ShoppingCart::class)]
+    #[Locator(methodName: 'getPaymentsForCart', className: ShoppingCart::class), FieldName('$this')]
     private array $payments = [];
     /**
      * @var CartCode[]
      */
-    #[Locator(methodName: 'getCodesForCart', className: ShoppingCart::class)]
+    #[Locator(methodName: 'getCodesForCart', className: ShoppingCart::class), FieldName('$this')]
     private array $codes = [];
+    #[Locator(methodName: 'getAvailableSpeedsForCart', className: ShoppingCart::class), FieldName('$this'), Lazy]
+    private array $availableSpeeds = [];
 
     public function getId(): ?int
     {
@@ -167,6 +170,16 @@ class Cart implements SavableInterface
     public function setCodes(array $codes): void
     {
         $this->codes = $codes;
+    }
+
+    public function getAvailableSpeeds(): array
+    {
+        return $this->availableSpeeds;
+    }
+
+    public function setAvailableSpeeds(array $availableSpeeds): void
+    {
+        $this->availableSpeeds = $availableSpeeds;
     }
 
     public function addCode(DiscountCode $code): bool
