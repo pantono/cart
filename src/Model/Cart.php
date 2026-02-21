@@ -50,6 +50,9 @@ class Cart implements SavableInterface
      */
     #[Locator(methodName: 'getCodesForCart', className: ShoppingCart::class), FieldName('$this')]
     private array $codes = [];
+    /**
+     * @var DeliverySpeed[]
+     */
     #[Locator(methodName: 'getAvailableSpeedsForCart', className: ShoppingCart::class), FieldName('$this'), Lazy]
     private array $availableSpeeds = [];
 
@@ -172,6 +175,9 @@ class Cart implements SavableInterface
         $this->codes = $codes;
     }
 
+    /**
+     * @return DeliverySpeed[]
+     */
     public function getAvailableSpeeds(): array
     {
         return $this->availableSpeeds;
@@ -209,10 +215,10 @@ class Cart implements SavableInterface
         foreach ($this->getItems() as $item) {
             if ($item->getProduct()->getId() === $product->getId()) {
                 if ($item->getQuantity() + $quantity > $product->getStockHolding()) {
-                    throw new NotEnoughStock('Not enough stock to add ' . $quantity . ' to cart');
                     /**
                      * Don't update quantity if an item will be out of stock
                      */
+                    throw new NotEnoughStock('Not enough stock to add ' . $quantity . ' to cart');
                 }
                 $item->setQuantity($quantity);
                 return $item;
@@ -351,5 +357,17 @@ class Cart implements SavableInterface
             return $this->getItemTotalNet() + $this->getShippingCostNet() - $this->getDiscount() + $this->getVat();
         }
         return $this->getItemTotalGross() - $this->getDiscount();
+    }
+
+    public function checkSpeed(): void
+    {
+        if ($this->getDeliverySpeed()) {
+            foreach ($this->getAvailableSpeeds() as $speed) {
+                if ($speed->getId() === $this->getDeliverySpeed()->getId()) {
+                    return;
+                }
+            }
+            $this->setDeliverySpeed(null);
+        }
     }
 }

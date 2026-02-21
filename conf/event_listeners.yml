@@ -1,0 +1,2 @@
+CheckCartSpeed:
+  class: Pantono\Cart\Events\CheckCartSpeed
