@@ -105,9 +105,15 @@ class ShoppingCart
     {
         $speeds = [];
         $weight = $cart->getTotalWeight();
+        if (!$cart->getShippingLocation()) {
+            return [];
+        }
         foreach ($this->getActiveSpeeds() as $speed) {
             $available = false;
             foreach ($speed->getCosts() as $cost) {
+                if ($cost->getCountry()->getId() !== $cart->getShippingLocation()->getCountry()->getId()) {
+                    continue;
+                }
                 if ($cost->getMinWeight() > $weight && $cost->getMaxWeight() <= $weight) {
                     $available = true;
                 }
