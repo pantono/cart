@@ -368,6 +368,11 @@ class Cart implements SavableInterface
                 }
             }
             $this->setDeliverySpeed(null);
+            return;
+        }
+
+        if (count($this->getAvailableSpeeds()) > 0) {
+            $this->setDeliverySpeed($this->getAvailableSpeeds()[0]);
         }
     }
 }
