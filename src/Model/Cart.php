@@ -35,6 +35,10 @@ class Cart implements SavableInterface
     private ?Location $shippingLocation = null;
     #[OneToOne(targetModel: Location::class), FieldName('billing_location_id')]
     private ?Location $billingLocation = null;
+    private string $forename;
+    private string $surname;
+    private string $email;
+    private string $telephone;
     /**
      * @var CartItem[]
      */
@@ -134,6 +138,46 @@ class Cart implements SavableInterface
     public function setBillingLocation(?Location $billingLocation): void
     {
         $this->billingLocation = $billingLocation;
+    }
+
+    public function getForename(): string
+    {
+        return $this->forename;
+    }
+
+    public function setForename(string $forename): void
+    {
+        $this->forename = $forename;
+    }
+
+    public function getSurname(): string
+    {
+        return $this->surname;
+    }
+
+    public function setSurname(string $surname): void
+    {
+        $this->surname = $surname;
+    }
+
+    public function getEmail(): string
+    {
+        return $this->email;
+    }
+
+    public function setEmail(string $email): void
+    {
+        $this->email = $email;
+    }
+
+    public function getTelephone(): string
+    {
+        return $this->telephone;
+    }
+
+    public function setTelephone(string $telephone): void
+    {
+        $this->telephone = $telephone;
     }
 
     /**
@@ -374,5 +418,41 @@ class Cart implements SavableInterface
         if (count($this->getAvailableSpeeds()) > 0) {
             $this->setDeliverySpeed($this->getAvailableSpeeds()[0]);
         }
+    }
+
+    /**
+     * @return array<int, array{'field': string, 'error': string}>
+     */
+    public function getValidationErrors(): array
+    {
+        $errors = [];
+        if (empty($this->getItems())) {
+            $errors[] = ['field' => 'items', 'error' => 'Cart must contain at least one item'];
+        }
+        if (!$this->getForename()) {
+            $errors[] = ['field' => 'forename', 'error' => 'Forename is required'];
+        }
+        if (!$this->getSurname()) {
+            $errors[] = ['field' => 'surname', 'error' => 'Surname is required'];
+        }
+        if (!$this->getTelephone()) {
+            $errors[] = ['field' => 'telephone', 'error' => 'Telephone is required'];
+        }
+        if (!$this->getShippingLocation()) {
+            $errors[] = ['field' => 'shipping_location', 'error' => 'Shipping location is required'];
+        }
+        if (!$this->getBillingLocation()) {
+            $errors[] = ['field' => 'billing_location', 'error' => 'Billing location is required'];
+        }
+        if (!$this->getDeliverySpeed()) {
+            $errors[] = ['field' => 'delivery_speed', 'error' => 'Delivery type is required'];
+        }
+
+        return $errors;
+    }
+
+    public function isValid(): bool
+    {
+        return empty($this->getValidationErrors());
     }
 }

@@ -5,64 +5,8 @@ use Pantono\Database\Migration\Base\BasePantonoMigration;
 
 final class CartMigration extends BasePantonoMigration
 {
-    public function up(): void
+    public function change(): void
     {
-        $this->table($this->addTablePrefix('order_status'))
-            ->addColumn('name', 'string')
-            ->addColumn('completed', 'boolean')
-            ->addColumn('cancelled', 'boolean')
-            ->addColumn('pending', 'boolean')
-            ->create();
-
-        if ($this->isMigratingUp()) {
-            $this->insertOnCreate($this->addTablePrefix('order_status'), [
-                ['id' => 1, 'name' => 'Pending', 'completed' => 0, 'cancelled' => 0, 'pending' => 1],
-                ['id' => 2, 'name' => 'Preparing', 'completed' => 0, 'cancelled' => 0, 'pending' => 1],
-                ['id' => 3, 'name' => 'Dispatched', 'completed' => 1, 'cancelled' => 0, 'pending' => 0],
-                ['id' => 4, 'name' => 'Cancelled', 'completed' => 0, 'cancelled' => 1, 'pending' => 0],
-                ['id' => 5, 'name' => 'Partial Dispatch', 'completed' => 0, 'cancelled' => 0, 'pending' => 0],
-            ]);
-
-        }
-        $this->table($this->addTablePrefix('order'))
-            ->addColumn('date_created', 'datetime')
-            ->addColumn('reference', 'string')
-            ->addColumn('date_updated', 'datetime')
-            ->addLinkedColumn('status_id', $this->addTablePrefix('order_status'), 'id')
-            ->addLinkedColumn('billing_location', $this->addTablePrefix('location'), 'id')
-            ->addLinkedColumn('delivery_location', $this->addTablePrefix('location'), 'id')
-            ->addLinkedColumn('customer_id', $this->addTablePrefix('customer'), 'id')
-            ->create();
-
-
-        $this->table($this->addTablePrefix('order_item_status'))
-            ->addColumn('name', 'string')
-            ->addColumn('dispatched', 'boolean')
-            ->addColumn('cancelled', 'boolean')
-            ->create();
-
-        $this->insertOnCreate($this->addTablePrefix('order_item_status'), [
-            ['id' => 1, 'name' => 'Pending', 'dispatched' => 0, 'cancelled' => 0],
-            ['id' => 2, 'name' => 'Dispatched', 'dispatched' => 0, 'cancelled' => 0],
-        ]);
-
-        $this->table($this->addTablePrefix('order_item'))
-            ->addLinkedColumn('order_id', $this->addTablePrefix('order'), 'id')
-            ->addLinkedColumn('product_version_id', $this->addTablePrefix('product_version'), 'id')
-            ->addLinkedColumn('status_id', $this->addTablePrefix('order_item_status'), 'id')
-            ->addColumn('quantity', 'integer')
-            ->addColumn('price', 'float')
-            ->addColumn('vat', 'float')
-            ->addColumn('date_dispatched', 'datetime', ['null' => true])
-            ->addColumn('tracking_number', 'string', ['null' => true])
-            ->addColumn('tracking_type', 'string', ['null' => true])
-            ->create();
-
-        $this->table($this->addTablePrefix('order_payment'))
-            ->addLinkedColumn('payment_id', $this->addTablePrefix('payment'), 'id')
-            ->addLinkedColumn('order_id', $this->addTablePrefix('order'), 'id')
-            ->create();
-
         $this->table($this->addTablePrefix('delivery_speed'))
             ->addColumn('name', 'string')
             ->addColumn('live', 'boolean')
@@ -94,8 +38,11 @@ final class CartMigration extends BasePantonoMigration
             ->addLinkedColumn('user_id', $this->addTablePrefix('user'), 'id', ['null' => true])
             ->addLinkedColumn('shipping_location_id', 'location', 'id', ['null' => true])
             ->addLinkedColumn('billing_location_id', 'location', 'id', ['null' => true])
+            ->addColumn('forename', 'string', ['null' => true])
+            ->addColumn('surname', 'string', ['null' => true])
+            ->addColumn('email', 'string', ['null' => true])
+            ->addColumn('telephone', 'string', ['null' => true])
             ->addIndex('session_id')
-            ->addLinkedColumn('order_id', $this->addTablePrefix('order'), 'id', ['null' => true])
             ->create();
 
         $this->table($this->addTablePrefix('cart_code'), ['id' => false])

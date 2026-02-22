@@ -23,6 +23,11 @@ use Pantono\Cart\Event\PreDeliveryCostSaveEvent;
 use Pantono\Cart\Event\PostDeliveryCostSaveEvent;
 use Pantono\Cart\Event\PreDeliveryEstimateSaveEvent;
 use Pantono\Cart\Event\PostDeliveryEstimateSaveEvent;
+use Pantono\Cart\Model\Order;
+use Pantono\Cart\Model\OrderLineItem;
+use Pantono\Cart\Model\OrderLineItemType;
+use Pantono\Cart\Model\OrderItemStatus;
+use Pantono\Cart\Exception\CartValidationFailedException;
 
 class ShoppingCart
 {
@@ -198,4 +203,52 @@ class ShoppingCart
         $this->dispatcher->dispatch($event);
     }
 
+    public function convertCartToOrder(Cart $cart): Order
+    {
+        if ($cart->isValid() === false) {
+            throw new CartValidationFailedException($cart->getValidationErrors());
+        }
+        $order = new Order();
+        $order->setBillingLocation($cart->getBillingLocation());
+        $order->setShippingLocation($cart->getShippingLocation());
+        $order->setDeliverySpeed($cart->getDeliverySpeed());
+        $order->setForename($cart->getForename());
+        $order->setSurname($cart->getSurname());
+        $order->setEmail($cart->getEmail());
+        $order->setTelephone($cart->getTelephone());
+        $itemTypeProduct = $this->hydrator->lookupRecord(OrderLineItemType::class, Orders::LINE_TYPE_PRODUCT);
+        $lineTypePending = $this->hydrator->lookupRecord(OrderItemStatus::class, Orders::LINE_STATUS_PENDING);
+        foreach ($cart->getItems() as $item) {
+            $version = $item->getProduct()->getPublishedDraft();
+            $lineItem = new OrderLineItem();
+            $lineItem->setType($itemTypeProduct);
+            $lineItem->setProductVersion($version);
+            $lineItem->setQuantity($item->getQuantity());
+            $lineItem->setPrice($version->getPrice());
+            $lineItem->setStatus($lineTypePending);
+            $lineItem->setVatRate($version->getVatRate());
+            $order->addItem($lineItem);
+        }
+        if ($cart->getDeliveryCost()) {
+            $itemTypeDelivery = $this->hydrator->lookupRecord(OrderLineItemType::class, Orders::LINE_TYPE_DELIVERY);
+            $lineItem = new OrderLineItem();
+            $lineItem->setType($itemTypeDelivery);
+            $lineItem->setQuantity(1);
+            $lineItem->setPrice($cart->getDeliveryCost()->getCost());
+            $order->addItem($lineItem);
+        }
+
+        if ($cart->getDiscount()) {
+            $lineItem = new OrderLineItem();
+            $itemTypeDiscount = $this->hydrator->lookupRecord(OrderLineItemType::class, Orders::LINE_TYPE_DISCOUNT);
+            $lineItem->setType($itemTypeDiscount);
+            $lineItem->setQuantity(1);
+            $lineItem->setPrice($cart->getDiscount());
+            $order->addItem($lineItem);
+        }
+
+        $order->setPayments($cart->getPayments());
+
+        return $order;
+    }
 }
