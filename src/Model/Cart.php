@@ -35,10 +35,10 @@ class Cart implements SavableInterface
     private ?Location $shippingLocation = null;
     #[OneToOne(targetModel: Location::class), FieldName('billing_location_id')]
     private ?Location $billingLocation = null;
-    private string $forename;
-    private string $surname;
-    private string $email;
-    private string $telephone;
+    private ?string $forename = null;
+    private ?string $surname = null;
+    private ?string $email = null;
+    private ?string $telephone = null;
     /**
      * @var CartItem[]
      */
@@ -140,42 +140,42 @@ class Cart implements SavableInterface
         $this->billingLocation = $billingLocation;
     }
 
-    public function getForename(): string
+    public function getForename(): ?string
     {
         return $this->forename;
     }
 
-    public function setForename(string $forename): void
+    public function setForename(?string $forename): void
     {
         $this->forename = $forename;
     }
 
-    public function getSurname(): string
+    public function getSurname(): ?string
     {
         return $this->surname;
     }
 
-    public function setSurname(string $surname): void
+    public function setSurname(?string $surname): void
     {
         $this->surname = $surname;
     }
 
-    public function getEmail(): string
+    public function getEmail(): ?string
     {
         return $this->email;
     }
 
-    public function setEmail(string $email): void
+    public function setEmail(?string $email): void
     {
         $this->email = $email;
     }
 
-    public function getTelephone(): string
+    public function getTelephone(): ?string
     {
         return $this->telephone;
     }
 
-    public function setTelephone(string $telephone): void
+    public function setTelephone(?string $telephone): void
     {
         $this->telephone = $telephone;
     }
