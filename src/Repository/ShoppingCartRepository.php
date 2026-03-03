@@ -12,8 +12,8 @@ class ShoppingCartRepository extends DefaultRepository
      */
     public function getActiveCartForSession(string $sessionId): ?array
     {
-        $select = $this->getDb()->select('c.*')->from('cart', 'c')
-            ->where('c.session_id=?')
+        $select = $this->getDb()->select('c.*')->from($this->pt('cart'), 'c')
+            ->where('c.session_id=:session_id')
             ->where('c.order_id is null')
             ->setParameter('session_id', $sessionId);
 
@@ -33,16 +33,16 @@ class ShoppingCartRepository extends DefaultRepository
         if (!empty($itemIds)) {
             $params['id not in (?)'] = $itemIds;
         }
-        $this->getDb()->delete($this->appendTablePrefix('cart_item'), $params);
+        $this->getDb()->delete($this->pt('cart_item'), $params);
 
-        $this->getDb()->delete($this->appendTablePrefix('cart_payment'), ['cart_id=?' => $cart->getId()]);
+        $this->getDb()->delete($this->pt('cart_payment'), ['cart_id=?' => $cart->getId()]);
         foreach ($cart->getPayments() as $payment) {
-            $this->getDb()->insert($this->appendTablePrefix('cart_payment'), ['cart_id' => $cart->getId(), 'payment_id' => $payment->getId()]);
+            $this->getDb()->insert($this->pt('cart_payment'), ['cart_id' => $cart->getId(), 'payment_id' => $payment->getId()]);
         }
 
-        $this->getDb()->delete($this->appendTablePrefix('cart_code'), ['cart_id=?' => $cart->getId()]);
+        $this->getDb()->delete($this->pt('cart_code'), ['cart_id=?' => $cart->getId()]);
         foreach ($cart->getPayments() as $code) {
-            $this->getDb()->insert($this->appendTablePrefix('cart_code'), ['cart_id' => $cart->getId(), 'code_id' => $code->getId()]);
+            $this->getDb()->insert($this->pt('cart_code'), ['cart_id' => $cart->getId(), 'code_id' => $code->getId()]);
         }
     }
 
@@ -54,8 +54,8 @@ class ShoppingCartRepository extends DefaultRepository
         if (!$date) {
             $date = new \DateTime();
         }
-        $select = $this->getDb()->select('s.*')->from($this->appendTablePrefix('special_offer_product'), 'sop')
-            ->innerJoin('sop', $this->appendTablePrefix('special_offer'), 'so', 'sop.special_offer_id=so.id')
+        $select = $this->getDb()->select('s.*')->from($this->pt('special_offer_product'), 'sop')
+            ->innerJoin('sop', $this->pt('special_offer'), 'so', 'sop.special_offer_id=so.id')
             ->where('so.start_date <= :start_date')
             ->where('so.end_date >= :end_dat')
             ->where('sop.product_version_id=:product_version_id')
@@ -81,8 +81,8 @@ class ShoppingCartRepository extends DefaultRepository
      */
     public function getPaymentsForCart(Cart $cart): array
     {
-        $select = $this->getDb()->select('p.*')->from($this->appendTablePrefix('cart_payment'), 'cp')
-            ->innerJoin('cp', $this->appendTablePrefix('payment'), 'p', 'cp.payment_id=p.id')
+        $select = $this->getDb()->select('p.*')->from($this->pt('cart_payment'), 'cp')
+            ->innerJoin('cp', $this->pt('payment'), 'p', 'cp.payment_id=p.id')
             ->where('cp.cart_id=:id')
             ->setParameter('id', $cart->getId());
 
@@ -94,6 +94,6 @@ class ShoppingCartRepository extends DefaultRepository
      */
     public function getActiveSpeeds(): array
     {
-        return $this->selectRowsByValues($this->appendTablePrefix('delivery_speed'), ['live' => 1]);
+        return $this->selectRowsByValues($this->pt('delivery_speed'), ['live' => 1]);
     }
 }
