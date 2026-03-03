@@ -19,44 +19,52 @@ class OrdersRepository extends DefaultRepository
         $productVersionTable = $this->appendTablePrefix('product_version');
         $productTable = $this->appendTablePrefix('product');
 
-        $select = $this->getDb()->select()->from($orderTable)
-            ->joinInner($lineItemTable, $lineItemTable . '.order_id=' . $orderTable . '.id', [])
-            ->joinInner($productVersionTable, $productVersionTable . '.id=' . $lineItemTable . '.product_version_id', [])
-            ->joinInner($productTable, $productTable . '.id=' . $productVersionTable . '.product_id', [])
-            ->order($filter->getOrder() . ' ' . $filter->getDirection())
-            ->group($orderTable . '.id');
+        $select = $this->getDb()->select('o.*')->from($orderTable, 'o')
+            ->innerJoin('o', $lineItemTable, 'i', 'o.id = i.order_id')
+            ->innerJoin('i', $productVersionTable, 'pv', 'i.product_version_id = pv.id')
+            ->innerJoin('pv', $productTable, 'p', 'pv.product_id = p.id')
+            ->addOrderBy($filter->getOrder(), $filter->getDirection())
+            ->groupBy('o.id');
+
 
         if ($filter->getCustomer() !== null) {
-            $select->where($orderTable . '.customer_id=?', $filter->getCustomer()->getId());
+            $select->where('o.customer_id=:customer_id')
+                ->setParameter('customer_id', $filter->getCustomer()->getId());
         }
         if ($filter->getCompany() !== null) {
-            $select->where($productVersionTable . '.company_id=?', $filter->getCompany()->getId());
+            $select->where('pv.company_id=:company_id')
+                ->setParameter('company_id', $filter->getCompany()->getId());
         }
         if ($filter->getDatePlacedStart() !== null) {
-            $select->where($orderTable . '.date_created >= ?', $filter->getDatePlacedStart()->format('Y-m-d H:i:s'));
+            $select->where('o.date_created >= :date_placed_start')
+                ->setParameter('date_placed_start', $filter->getDatePlacedStart()->format('Y-m-d H:i:s'));
         }
         if ($filter->getDatePlacedEnd() !== null) {
-            $select->where($orderTable . '.date_created <= ?', $filter->getDatePlacedEnd()->format('Y-m-d H:i:s'));
+            $select->where('o.date_created <= :date_placed_end')
+                ->setParameter('date_placed_end', $filter->getDatePlacedEnd()->format('Y-m-d H:i:s'));
         }
         if ($filter->getStatus() !== null) {
-            $select->where($orderTable . '.status_id=?', $filter->getStatus()->getId());
+            $select->where('o.status_id=:status_id')
+                ->setParameter('status_id', $filter->getStatus()->getId());
         }
         if ($filter->getFolder() !== null) {
-            $select->where($orderTable . '.folder_id=?', $filter->getFolder()->getId());
+            $select->where('o.folder_id=:folder_id')
+                ->setParameter('folder_id', $filter->getFolder()->getId());
         }
         if ($filter->getName() !== null) {
-            $select->where($orderTable . '.name LIKE ?', '%' . $filter->getName() . '%');
+            $select->where('o.name LIKE :name')
+                ->setParameter('name', '%' . $filter->getName() . '%');
         }
         if ($filter->getOrderRef() !== null) {
-            $select->where($orderTable . '.order_ref LIKE ?', '%' . $filter->getOrderRef() . '%');
+            $select->where('o.order_ref LIKE :order_ref')
+                ->setParameter('order_ref', '%' . $filter->getOrderRef() . '%');
         }
         if ($filter->getProductSearch() !== null) {
-            $select->where('(' . $productVersionTable . '.title LIKE ?', '%' . $filter->getProductSearch() . '%')
-                ->orWhere($productTable . '.code LIKE ?)', '%' . $filter->getProductSearch() . '%');
+            $select->where('(pv.title LIKE :product_search or p.code like :product_search')
+                ->setParameter('product_search', '%' . $filter->getProductSearch() . '%');
         }
 
-        $filter->setTotalResults($this->getCount($select));
-        $select->limitPage($filter->getPage(), $filter->getPerPage());
+        $this->applyCountAndLimit($select, $filter);
 
         return $this->getDb()->fetchAll($select);
     }
@@ -66,9 +74,10 @@ class OrdersRepository extends DefaultRepository
      */
     public function getPaymentsForOrder(Order $order): array
     {
-        $select = $this->getDb()->select()->from($this->appendTablePrefix('order_payment'), [])
-            ->joinInner($this->appendTablePrefix('payment'), $this->appendTablePrefix('order_payment') . '.payment_id=' . $this->appendTablePrefix('payment') . '.id')
-            ->where($this->appendTablePrefix('order_payment') . '.order_id=?', $order->getId());
+        $select = $this->getDb()->select('p.*')->from($this->appendTablePrefix('order_payment'), 'op')
+            ->innerJoin('op', 'payment', 'p', 'op.payment_id = p.id')
+            ->where('op..order_id=:order_id')
+            ->setParameter('order_id', $order->getId());
 
         return $this->getDb()->fetchAll($select);
     }

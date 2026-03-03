@@ -8,13 +8,14 @@ use Pantono\Cart\Model\Cart;
 class ShoppingCartRepository extends DefaultRepository
 {
     /**
-     * @return array<int, mixed>|null
+     * @return array<mixed>|null
      */
     public function getActiveCartForSession(string $sessionId): ?array
     {
-        $select = $this->getDb()->select()->from('cart')
-            ->where('session_id=?', $sessionId)
-            ->where('order_id is null');
+        $select = $this->getDb()->select('c.*')->from('cart', 'c')
+            ->where('c.session_id=?')
+            ->where('c.order_id is null')
+            ->setParameter('session_id', $sessionId);
 
         return $this->getDb()->fetchRow($select);
     }
@@ -53,11 +54,14 @@ class ShoppingCartRepository extends DefaultRepository
         if (!$date) {
             $date = new \DateTime();
         }
-        $select = $this->getDb()->select()->from($this->appendTablePrefix('special_offer_product'), [])
-            ->joinInner($this->appendTablePrefix('special_offer'), $this->appendTablePrefix('special_offer_product') . '.special_offer_id=' . $this->appendTablePrefix('special_offer') . '.id')
-            ->where($this->appendTablePrefix('special_offer') . '.start_date <= ?', $date->format('Y-m-d H:i:s'))
-            ->where($this->appendTablePrefix('special_offer') . '.end_date >= ?', $date->format('Y-m-d H:i:s'))
-            ->where($this->appendTablePrefix('special_offer_product') . '.product_version_id=?', $productId);
+        $select = $this->getDb()->select('s.*')->from($this->appendTablePrefix('special_offer_product'), 'sop')
+            ->innerJoin('sop', $this->appendTablePrefix('special_offer'), 'so', 'sop.special_offer_id=so.id')
+            ->where('so.start_date <= :start_date')
+            ->where('so.end_date >= :end_dat')
+            ->where('sop.product_version_id=:product_version_id')
+            ->setParameter('start_date', $date->format('Y-m-d H:i:s'))
+            ->setParameter('end_date', $date->format('Y-m-d H:i:s'))
+            ->setParameter('product_version_id', $productId);
 
         return $this->getDb()->fetchAll($select);
     }
@@ -77,9 +81,10 @@ class ShoppingCartRepository extends DefaultRepository
      */
     public function getPaymentsForCart(Cart $cart): array
     {
-        $select = $this->getDb()->select()->from($this->appendTablePrefix('cart_payment'), [])
-            ->joinInner($this->appendTablePrefix('payment'), $this->appendTablePrefix('cart_payment') . '.payment_id=' . $this->appendTablePrefix('payment') . '.id')
-            ->where($this->appendTablePrefix('cart_payment') . '.cart_id=?', $cart->getId());
+        $select = $this->getDb()->select('p.*')->from($this->appendTablePrefix('cart_payment'), 'cp')
+            ->innerJoin('cp', $this->appendTablePrefix('payment'), 'p', 'cp.payment_id=p.id')
+            ->where('cp.cart_id=:id')
+            ->setParameter('id', $cart->getId());
 
         return $this->getDb()->fetchAll($select);
     }
