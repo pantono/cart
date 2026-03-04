@@ -56,7 +56,7 @@ class ShoppingCartRepository extends DefaultRepository
         if (!$date) {
             $date = new \DateTime();
         }
-        $select = $this->getDb()->select('s.*')->from($this->pt('special_offer_product'), 'sop')
+        $select = $this->getDb()->select('so.*')->from($this->pt('special_offer_product'), 'sop')
             ->innerJoin('sop', $this->pt('special_offer'), 'so', 'sop.special_offer_id=so.id')
             ->where('so.start_date <= :start_date')
             ->where('so.end_date >= :end_date')
