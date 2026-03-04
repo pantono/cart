@@ -59,7 +59,7 @@ class ShoppingCartRepository extends DefaultRepository
         $select = $this->getDb()->select('s.*')->from($this->pt('special_offer_product'), 'sop')
             ->innerJoin('sop', $this->pt('special_offer'), 'so', 'sop.special_offer_id=so.id')
             ->where('so.start_date <= :start_date')
-            ->where('so.end_date >= :end_dat')
+            ->where('so.end_date >= :end_date')
             ->where('sop.product_version_id=:product_version_id')
             ->setParameter('start_date', $date->format('Y-m-d H:i:s'))
             ->setParameter('end_date', $date->format('Y-m-d H:i:s'))
