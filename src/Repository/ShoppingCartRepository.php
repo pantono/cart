@@ -4,6 +4,7 @@ namespace Pantono\Cart\Repository;
 
 use Pantono\Database\Repository\DefaultRepository;
 use Pantono\Cart\Model\Cart;
+use Doctrine\DBAL\ArrayParameterType;
 
 class ShoppingCartRepository extends DefaultRepository
 {
@@ -29,18 +30,19 @@ class ShoppingCartRepository extends DefaultRepository
             $this->saveModel($item);
             $itemIds[] = $item->getId();
         }
-        $params = ['cart_id=?' => $cart->getId()];
+        $delete = $this->getDb()->createQueryBuilder()->delete($this->pt('cart_item'))->where('cart_id=:cart_id')->setParameter('cart_id', $cart->getId());
         if (!empty($itemIds)) {
-            $params['id not in (?)'] = $itemIds;
+            $delete->where('id not in (:ids)')
+                ->setParameter('ids', $itemIds, ArrayParameterType::INTEGER);
         }
-        $this->getDb()->delete($this->pt('cart_item'), $params);
+        $delete->executeQuery();
 
-        $this->getDb()->delete($this->pt('cart_payment'), ['cart_id=?' => $cart->getId()]);
+        $this->getDb()->delete($this->pt('cart_payment'), ['cart_id' => $cart->getId()]);
         foreach ($cart->getPayments() as $payment) {
             $this->getDb()->insert($this->pt('cart_payment'), ['cart_id' => $cart->getId(), 'payment_id' => $payment->getId()]);
         }
 
-        $this->getDb()->delete($this->pt('cart_code'), ['cart_id=?' => $cart->getId()]);
+        $this->getDb()->delete($this->pt('cart_code'), ['cart_id' => $cart->getId()]);
         foreach ($cart->getPayments() as $code) {
             $this->getDb()->insert($this->pt('cart_code'), ['cart_id' => $cart->getId(), 'code_id' => $code->getId()]);
         }
