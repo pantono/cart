@@ -23,7 +23,7 @@ class OrderFilter implements PageableInterface
     private ?string $orderRef = null;
     private ?string $productSearch = null;
     private ?bool $paid = null;
-    private string $order = 'date_placed';
+    private string $order = 'date_created';
     private string $direction = 'DESC';
 
     public function getCompany(): ?Company
