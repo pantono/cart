@@ -43,8 +43,8 @@ class ShoppingCartRepository extends DefaultRepository
         }
 
         $this->getDb()->delete($this->pt('cart_code'), ['cart_id' => $cart->getId()]);
-        foreach ($cart->getPayments() as $code) {
-            $this->getDb()->insert($this->pt('cart_code'), ['cart_id' => $cart->getId(), 'code_id' => $code->getId()]);
+        foreach ($cart->getCodes() as $code) {
+            $this->getDb()->insert($this->pt('cart_code'), ['cart_id' => $cart->getId(), 'code_id' => $code->getCode()->getId(), 'date_added' => $code->getDateAdded()->format('Y-m-d H:i:s')]);
         }
     }
 
