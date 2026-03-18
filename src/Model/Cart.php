@@ -206,6 +206,11 @@ class Cart implements SavableInterface
         $this->payments = $payments;
     }
 
+    public function addPayment(Payment $payment): void
+    {
+        $this->payments[] = $payment;
+    }
+
     /**
      * @return CartCode[]
      */
