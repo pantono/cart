@@ -31,9 +31,9 @@ class ShoppingCartRepository extends DefaultRepository
             $this->saveModel($item);
             $itemIds[] = $item->getId();
         }
-        $delete = $this->getDb()->createQueryBuilder()->delete($this->pt('cart_item'))->where('cart_id=:cart_id')->setParameter('cart_id', $cart->getId());
+        $delete = $this->getDb()->createQueryBuilder()->delete($this->pt('cart_item'))->andWhere('cart_id=:cart_id')->setParameter('cart_id', $cart->getId());
         if (!empty($itemIds)) {
-            $delete->where('id not in (:ids)')
+            $delete->andWhere('id not in (:ids)')
                 ->setParameter('ids', $itemIds, ArrayParameterType::INTEGER);
         }
         $delete->executeQuery();
