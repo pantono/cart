@@ -60,7 +60,7 @@ class Orders
         $event->setPrevious($previous);
         $this->dispatcher->dispatch($event);
 
-        $this->repository->saveModel($order);
+        $this->repository->saveOrder($order);
 
         $event = new PostOrderSaveEvent();
         $event->setCurrent($order);
