@@ -12,7 +12,9 @@ use Pantono\Database\Traits\SavableModel;
 use Pantono\Contracts\Attributes\Locator;
 use Pantono\Payments\Model\Payment;
 use Pantono\Cart\Orders;
+use Pantono\Contracts\Attributes\DatabaseTable;
 
+#[DatabaseTable('order')]
 class Order implements SavableInterface
 {
     use SavableModel;

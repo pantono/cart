@@ -5,7 +5,9 @@ namespace Pantono\Cart\Model;
 use Pantono\Products\Model\DiscountCode;
 use Pantono\Contracts\Attributes\Database\OneToOne;
 use Pantono\Contracts\Attributes\FieldName;
+use Pantono\Contracts\Attributes\DatabaseTable;
 
+#[DatabaseTable('cart_code')]
 class CartCode
 {
     private int $cartId;
