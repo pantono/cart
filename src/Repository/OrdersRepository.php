@@ -5,6 +5,7 @@ namespace Pantono\Cart\Repository;
 use Pantono\Database\Repository\DefaultRepository;
 use Pantono\Cart\Filter\OrderFilter;
 use Pantono\Cart\Model\Order;
+use Pantono\Core\Helper\ConfigHelper;
 
 class OrdersRepository extends DefaultRepository
 {
@@ -90,6 +91,11 @@ class OrdersRepository extends DefaultRepository
             $order->setId($id);
         }
 
+        if (!$order->getReference()) {
+            $prefix = ConfigHelper::getConfigValue('order.reference_prefix', 'REF');
+            $order->setReference($prefix . $order->getId());
+            $this->getDb()->update($orderTable, ['reference' => $order->getReference()], ['id' => $order->getId()]);
+        }
         $itemIds = [];
         foreach ($order->getItems() as $item) {
             $item->setOrderId($order->getId());
