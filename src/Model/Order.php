@@ -33,7 +33,7 @@ class Order implements SavableInterface
     private ?DeliverySpeed $deliverySpeed = null;
     #[OneToOne(targetModel: Customer::class), FieldName('customer_id')]
     private ?Customer $customer = null;
-    #[OneToOne(targetModel: OrderFolder::class), FieldName('folder_id')]
+    #[OneToOne(targetModel: OrderFolder::class), FieldName('order_folder_id')]
     private ?OrderFolder $folder = null;
     private string $forename;
     private string $surname;
