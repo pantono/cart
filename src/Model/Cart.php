@@ -59,6 +59,8 @@ class Cart implements SavableInterface
      */
     #[Locator(methodName: 'getAvailableSpeedsForCart', className: ShoppingCart::class), FieldName('$this'), Lazy]
     private array $availableSpeeds = [];
+    #[OneToOne(targetModel: Order::class), FieldName('order_id')]
+    private ?Order $order = null;
 
     public function getId(): ?int
     {
@@ -235,6 +237,16 @@ class Cart implements SavableInterface
     public function setAvailableSpeeds(array $availableSpeeds): void
     {
         $this->availableSpeeds = $availableSpeeds;
+    }
+
+    public function getOrder(): ?Order
+    {
+        return $this->order;
+    }
+
+    public function setOrder(?Order $order): void
+    {
+        $this->order = $order;
     }
 
     public function addCode(DiscountCode $code): bool
