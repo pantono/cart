@@ -25,8 +25,8 @@ class Order implements SavableInterface
     private ?string $reference = null;
     #[OneToOne(targetModel: OrderStatus::class), FieldName('status_id')]
     private ?OrderStatus $status = null;
-    #[OneToOne(targetModel: Location::class), FieldName('shipping_location_id')]
-    private ?Location $shippingLocation = null;
+    #[OneToOne(targetModel: Location::class), FieldName('delivery_location_id')]
+    private ?Location $deliveryLocation = null;
     #[OneToOne(targetModel: Location::class), FieldName('billing_location_id')]
     private ?Location $billingLocation = null;
     #[OneToOne(targetModel: DeliverySpeed::class), FieldName('delivery_speed_id')]
@@ -103,14 +103,14 @@ class Order implements SavableInterface
         $this->status = $status;
     }
 
-    public function getShippingLocation(): ?Location
+    public function getDeliveryLocation(): ?Location
     {
-        return $this->shippingLocation;
+        return $this->deliveryLocation;
     }
 
-    public function setShippingLocation(?Location $shippingLocation): void
+    public function setDeliveryLocation(?Location $deliveryLocation): void
     {
-        $this->shippingLocation = $shippingLocation;
+        $this->deliveryLocation = $deliveryLocation;
     }
 
     public function getBillingLocation(): ?Location

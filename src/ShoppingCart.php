@@ -212,7 +212,7 @@ class ShoppingCart
         $order->setDateUpdated(new \DateTimeImmutable());
         $order->setDateCreated(new \DateTimeImmutable());
         $order->setBillingLocation($cart->getBillingLocation());
-        $order->setShippingLocation($cart->getShippingLocation());
+        $order->setDeliveryLocation($cart->getShippingLocation());
         $order->setDeliverySpeed($cart->getDeliverySpeed());
         $order->setForename($cart->getForename());
         $order->setSurname($cart->getSurname());
