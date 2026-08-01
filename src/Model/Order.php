@@ -39,9 +39,6 @@ class Order implements SavableInterface
     private string $surname;
     private string $email;
     private string $telephone;
-    private float $deliveryCost = 0;
-    private float $deliveryCostVat = 0;
-    private float $discount = 0;
     /**
      * @var OrderLineItem[]
      */
@@ -191,36 +188,6 @@ class Order implements SavableInterface
     public function setTelephone(string $telephone): void
     {
         $this->telephone = $telephone;
-    }
-
-    public function getDeliveryCost(): float
-    {
-        return $this->deliveryCost;
-    }
-
-    public function setDeliveryCost(float $deliveryCost): void
-    {
-        $this->deliveryCost = $deliveryCost;
-    }
-
-    public function getDeliveryCostVat(): float
-    {
-        return $this->deliveryCostVat;
-    }
-
-    public function setDeliveryCostVat(float $deliveryCostVat): void
-    {
-        $this->deliveryCostVat = $deliveryCostVat;
-    }
-
-    public function getDiscount(): float
-    {
-        return $this->discount;
-    }
-
-    public function setDiscount(float $discount): void
-    {
-        $this->discount = $discount;
     }
 
     /**
