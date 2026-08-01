@@ -119,7 +119,7 @@ class ShoppingCart
                 if ($cost->getCountry()->getId() !== $cart->getShippingLocation()->getCountry()->getId()) {
                     continue;
                 }
-                if ($cost->getMinWeight() > $weight && $cost->getMaxWeight() <= $weight) {
+                if ($weight >= $cost->getMinWeight() && $weight <= $cost->getMaxWeight()) {
                     $available = true;
                 }
             }
