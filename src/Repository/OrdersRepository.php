@@ -98,10 +98,10 @@ class OrdersRepository extends DefaultRepository
             $this->getDb()->update($orderTable, ['reference' => $order->getReference()], ['id' => $order->getId()]);
         }
         $itemIds = [];
-        $deleteQb = $this->getDb()->createQueryBuilder()->delete($this->appendTablePrefix('order_item'))->andWhere('order_id=:id')->setParameter('id', $order->getId());
+        $deleteQb = $this->getDb()->createQueryBuilder()->delete($this->appendTablePrefix('order_line_item'))->andWhere('order_id=:id')->setParameter('id', $order->getId());
         foreach ($order->getItems() as $item) {
             $item->setOrderId($order->getId());
-            $itemId = $this->insertOrUpdate($this->appendTablePrefix('order_item'), 'id', $item->getId(), $item->getAllData());
+            $itemId = $this->insertOrUpdate($this->appendTablePrefix('order_line_item'), 'id', $item->getId(), $item->getAllData());
             if ($itemId) {
                 $item->setId($itemId);
             }
