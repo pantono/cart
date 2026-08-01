@@ -6,6 +6,7 @@ use Pantono\Database\Repository\DefaultRepository;
 use Pantono\Cart\Filter\OrderFilter;
 use Pantono\Cart\Model\Order;
 use Pantono\Core\Helper\ConfigHelper;
+use Doctrine\DBAL\ArrayParameterType;
 
 class OrdersRepository extends DefaultRepository
 {
@@ -97,6 +98,7 @@ class OrdersRepository extends DefaultRepository
             $this->getDb()->update($orderTable, ['reference' => $order->getReference()], ['id' => $order->getId()]);
         }
         $itemIds = [];
+        $deleteQb = $this->getDb()->createQueryBuilder()->delete($this->appendTablePrefix('order_item'))->andWhere('order_id=:id')->setParameter('id', $order->getId());
         foreach ($order->getItems() as $item) {
             $item->setOrderId($order->getId());
             $itemId = $this->insertOrUpdate($this->appendTablePrefix('order_item'), 'id', $item->getId(), $item->getAllData());
@@ -105,11 +107,11 @@ class OrdersRepository extends DefaultRepository
             }
             $itemIds[] = $item->getId();
         }
-        $params = ['order_id=?' => $order->getId()];
         if (!empty($itemIds)) {
-            $params['id NOT IN (?)'] = $itemIds;
+            $deleteQb->andWhere('id not in (:ids)')
+                ->setParameter('ids', $itemIds, ArrayParameterType::INTEGER);
         }
-        $this->getDb()->delete($this->appendTablePrefix('order_item'), $params);
+        $deleteQb->executeQuery();
 
         $this->getDb()->delete($this->appendTablePrefix('order_payment'), ['order_id=?' => $order->getId()]);
         foreach ($order->getPayments() as $payment) {
