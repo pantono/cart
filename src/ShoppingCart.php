@@ -209,6 +209,8 @@ class ShoppingCart
             throw new CartValidationFailedException($cart->getValidationErrors());
         }
         $order = new Order();
+        $order->setDateUpdated(new \DateTimeImmutable());
+        $order->setDateCreated(new \DateTimeImmutable());
         $order->setBillingLocation($cart->getBillingLocation());
         $order->setShippingLocation($cart->getShippingLocation());
         $order->setDeliverySpeed($cart->getDeliverySpeed());
