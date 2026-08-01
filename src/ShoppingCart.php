@@ -218,11 +218,11 @@ class ShoppingCart
         $order->setSurname($cart->getSurname());
         $order->setEmail($cart->getEmail());
         $order->setTelephone($cart->getTelephone());
+        if ($cart->getDiscount()) {
+            $order->setDiscount($cart->getDiscount());
+        }
         if ($cart->getDeliveryCost()) {
             $order->setDeliveryCost($cart->getDeliveryCost()->getCost());
-            $order->setDeliveryCostVat(0);
-        } else {
-            $order->setDeliveryCost(0);
         }
         $itemTypeProduct = $this->hydrator->lookupRecord(OrderLineItemType::class, Orders::LINE_TYPE_PRODUCT);
         $lineTypePending = $this->hydrator->lookupRecord(OrderItemStatus::class, Orders::LINE_STATUS_PENDING);

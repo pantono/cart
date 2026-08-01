@@ -39,9 +39,9 @@ class Order implements SavableInterface
     private string $surname;
     private string $email;
     private string $telephone;
-    private float $deliveryCost;
-    private float $deliveryCostVat;
-    private float $discount;
+    private float $deliveryCost = 0;
+    private float $deliveryCostVat = 0;
+    private float $discount = 0;
     /**
      * @var OrderLineItem[]
      */
