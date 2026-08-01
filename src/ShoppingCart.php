@@ -220,6 +220,7 @@ class ShoppingCart
         $order->setTelephone($cart->getTelephone());
         if ($cart->getDeliveryCost()) {
             $order->setDeliveryCost($cart->getDeliveryCost()->getCost());
+            $order->setDeliveryCostVat(0);
         } else {
             $order->setDeliveryCost(0);
         }
