@@ -251,4 +251,9 @@ class ShoppingCart
 
         return $order;
     }
+
+    public function getCartFromPayment(Payment $payment): ?Cart
+    {
+        return $this->hydrator->hydrate(Cart::class, $this->repository->getCartFromPayment($payment));
+    }
 }

@@ -5,6 +5,7 @@ namespace Pantono\Cart\Repository;
 use Pantono\Database\Repository\DefaultRepository;
 use Pantono\Cart\Model\Cart;
 use Doctrine\DBAL\ArrayParameterType;
+use Pantono\Payments\Model\Payment;
 
 class ShoppingCartRepository extends DefaultRepository
 {
@@ -97,5 +98,18 @@ class ShoppingCartRepository extends DefaultRepository
     public function getActiveSpeeds(): array
     {
         return $this->selectRowsByValues($this->pt('delivery_speed'), ['live' => 1]);
+    }
+
+    /**
+     * @return ?array<int, mixed>
+     */
+    public function getCartFromPayment(Payment $payment): ?array
+    {
+        $select = $this->getDb()->select('c.*')->from($this->pt('cart_payment'), 'cp')
+            ->innerJoin('cp', $this->pt('cart'), 'c', 'cp.cart_id=c.id')
+            ->where('cp.payment_id=:id')
+            ->setParameter('id', $payment->getId());
+
+        return $this->getDb()->fetchRow($select);
     }
 }
