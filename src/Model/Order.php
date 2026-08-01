@@ -22,7 +22,7 @@ class Order implements SavableInterface
     private ?int $id = null;
     private \DateTimeInterface $dateCreated;
     private \DateTimeInterface $dateUpdated;
-    private string $reference;
+    private ?string $reference = null;
     #[OneToOne(targetModel: OrderStatus::class), FieldName('status_id')]
     private ?OrderStatus $status = null;
     #[OneToOne(targetModel: Location::class), FieldName('shipping_location_id')]
@@ -83,12 +83,12 @@ class Order implements SavableInterface
         $this->dateUpdated = $dateUpdated;
     }
 
-    public function getReference(): string
+    public function getReference(): ?string
     {
         return $this->reference;
     }
 
-    public function setReference(string $reference): void
+    public function setReference(?string $reference): void
     {
         $this->reference = $reference;
     }
