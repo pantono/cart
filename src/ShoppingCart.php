@@ -242,6 +242,7 @@ class ShoppingCart
             $lineItem->setType($itemTypeDelivery);
             $lineItem->setQuantity(1);
             $lineItem->setPrice($cart->getDeliveryCost()->getCost());
+            $lineItem->setVatRate($cart->getDeliveryCost()->getVatRate());
             $order->addItem($lineItem);
         }
 
