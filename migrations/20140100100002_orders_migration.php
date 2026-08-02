@@ -40,6 +40,7 @@ final class OrdersMigration extends BasePantonoMigration
             ->addColumn('surname', 'string')
             ->addColumn('email', 'string')
             ->addColumn('telephone', 'string')
+            ->addIndex('reference', ['unique' => true])
             ->create();
 
 
