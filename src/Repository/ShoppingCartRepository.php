@@ -15,8 +15,8 @@ class ShoppingCartRepository extends DefaultRepository
     public function getActiveCartForSession(string $sessionId): ?array
     {
         $select = $this->getDb()->select('c.*')->from($this->pt('cart'), 'c')
-            ->where('c.session_id=:session_id')
-            ->where('c.order_id is null')
+            ->andWhere('c.session_id=:session_id')
+            ->andWhere('c.order_id is null')
             ->setParameter('session_id', $sessionId);
 
         return $this->getDb()->fetchRow($select);
@@ -59,9 +59,9 @@ class ShoppingCartRepository extends DefaultRepository
         }
         $select = $this->getDb()->select('so.*')->from($this->pt('special_offer_product'), 'sop')
             ->innerJoin('sop', $this->pt('special_offer'), 'so', 'sop.special_offer_id=so.id')
-            ->where('so.start_date <= :start_date')
-            ->where('so.end_date >= :end_date')
-            ->where('sop.product_version_id=:product_version_id')
+            ->andWhere('so.start_date <= :start_date')
+            ->andWhere('so.end_date >= :end_date')
+            ->andWhere('sop.product_version_id=:product_version_id')
             ->setParameter('start_date', $date->format('Y-m-d H:i:s'))
             ->setParameter('end_date', $date->format('Y-m-d H:i:s'))
             ->setParameter('product_version_id', $productId);
@@ -86,7 +86,7 @@ class ShoppingCartRepository extends DefaultRepository
     {
         $select = $this->getDb()->select('p.*')->from($this->pt('cart_payment'), 'cp')
             ->innerJoin('cp', $this->pt('payment'), 'p', 'cp.payment_id=p.id')
-            ->where('cp.cart_id=:id')
+            ->andWhere('cp.cart_id=:id')
             ->setParameter('id', $cart->getId());
 
         return $this->getDb()->fetchAll($select);
@@ -107,7 +107,7 @@ class ShoppingCartRepository extends DefaultRepository
     {
         $select = $this->getDb()->select('c.*')->from($this->pt('cart_payment'), 'cp')
             ->innerJoin('cp', $this->pt('cart'), 'c', 'cp.cart_id=c.id')
-            ->where('cp.payment_id=:id')
+            ->andWhere('cp.payment_id=:id')
             ->setParameter('id', $payment->getId());
 
         return $this->getDb()->fetchRow($select);
