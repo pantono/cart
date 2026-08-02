@@ -223,6 +223,12 @@ class ShoppingCart
         $order->setSurname($cart->getSurname());
         $order->setEmail($cart->getEmail());
         $order->setTelephone($cart->getTelephone());
+        if ($cart->getUser()) {
+            $customer = $this->customers->getCustomerByUserId($cart->getUser()->getId());
+            if ($customer) {
+                $order->setCustomer($customer);
+            }
+        }
         $itemTypeProduct = $this->hydrator->lookupRecord(OrderLineItemType::class, Orders::LINE_TYPE_PRODUCT);
         $lineTypePending = $this->hydrator->lookupRecord(OrderItemStatus::class, Orders::LINE_STATUS_PENDING);
         foreach ($cart->getItems() as $item) {
