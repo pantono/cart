@@ -28,6 +28,7 @@ use Pantono\Cart\Model\OrderLineItem;
 use Pantono\Cart\Model\OrderLineItemType;
 use Pantono\Cart\Model\OrderItemStatus;
 use Pantono\Cart\Exception\CartValidationFailedException;
+use Pantono\Cart\Model\OrderStatus;
 
 class ShoppingCart
 {
@@ -214,6 +215,11 @@ class ShoppingCart
             throw new CartValidationFailedException($cart->getValidationErrors());
         }
         $order = new Order();
+        $statusId = Orders::ORDER_STATUS_PENDING;
+        $orderStatus = $this->hydrator->lookupRecord(OrderStatus::class, $statusId);
+        if ($orderStatus) {
+            $order->setStatus($orderStatus);
+        }
         $order->setDateUpdated(new \DateTimeImmutable());
         $order->setDateCreated(new \DateTimeImmutable());
         $order->setBillingLocation($cart->getBillingLocation());

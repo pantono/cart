@@ -101,7 +101,7 @@ class ShoppingCartRepository extends DefaultRepository
     }
 
     /**
-     * @return ?array<int, mixed>
+     * @return array<mixed>|null
      */
     public function getCartFromPayment(Payment $payment): ?array
     {

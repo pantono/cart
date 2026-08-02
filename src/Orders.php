@@ -10,6 +10,7 @@ use Pantono\Cart\Filter\OrderFilter;
 use Pantono\Payments\Model\Payment;
 use Pantono\Cart\Event\PreOrderSaveEvent;
 use Pantono\Cart\Event\PostOrderSaveEvent;
+use Pantono\Cart\Model\OrderStatus;
 
 class Orders
 {
@@ -22,11 +23,22 @@ class Orders
     public const int LINE_STATUS_PENDING = 1;
     public const int LINE_STATUS_DISPATCHED = 2;
 
+    public const int ORDER_STATUS_PENDING = 1;
+    public const int ORDER_STATUS_PREPARING = 2;
+    public const int ORDER_STATUS_DISPATCHED = 3;
+    public const int ORDER_STATUS_CANCELLED = 4;
+    public const int ORDER_STATUS_PARTIALLY_DISPATCHED = 5;
+
     public function __construct(OrdersRepository $repository, Hydrator $hydrator, EventDispatcher $dispatcher)
     {
         $this->repository = $repository;
         $this->hydrator = $hydrator;
         $this->dispatcher = $dispatcher;
+    }
+
+    public function getStatusById(int $id): ?OrderStatus
+    {
+        return $this->hydrator->lookupRecord(OrderStatus::class, $id);
     }
 
     public function getOrderById(int $id): ?Order
