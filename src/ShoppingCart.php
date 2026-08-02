@@ -49,6 +49,11 @@ class ShoppingCart
         return $this->hydrator->hydrate(Cart::class, $this->repository->getActiveCartForSession($sessionId));
     }
 
+    public function getCartById(int $id): ?Cart
+    {
+        return $this->hydrator->lookupRecord(Cart::class, $id);
+    }
+
     public function getOrCreateCartForSession(string $sessionId, ?User $user = null): Cart
     {
         $cart = $this->getActiveCartForSession($sessionId);
