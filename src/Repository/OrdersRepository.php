@@ -123,4 +123,12 @@ class OrdersRepository extends DefaultRepository
         }
         $this->getDb()->endTransaction();
     }
+
+    /**
+     * @return array<int,mixed>
+     */
+    public function getAllFolders(): array
+    {
+        return $this->selectAll($this->pt('order_folder'));
+    }
 }

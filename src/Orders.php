@@ -11,6 +11,7 @@ use Pantono\Payments\Model\Payment;
 use Pantono\Cart\Event\PreOrderSaveEvent;
 use Pantono\Cart\Event\PostOrderSaveEvent;
 use Pantono\Cart\Model\OrderStatus;
+use Pantono\Cart\Model\OrderFolder;
 
 class Orders
 {
@@ -39,6 +40,19 @@ class Orders
     public function getStatusById(int $id): ?OrderStatus
     {
         return $this->hydrator->lookupRecord(OrderStatus::class, $id);
+    }
+
+    public function getFolderById(int $id): ?OrderFolder
+    {
+        return $this->hydrator->lookupRecord(OrderFolder::class, $id);
+    }
+
+    /**
+     * @return OrderFolder[]
+     */
+    public function getAllFolders(): array
+    {
+        return $this->hydrator->hydrateSet(OrderFolder::class, $this->repository->getAllFolders());
     }
 
     public function getOrderById(int $id): ?Order
