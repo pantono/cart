@@ -86,6 +86,7 @@ class OrdersRepository extends DefaultRepository
 
     public function saveOrder(Order $order): void
     {
+        $this->getDb()->beginTransaction();
         $orderTable = $this->appendTablePrefix('order');
         $id = $this->insertOrUpdate($orderTable, 'id', $order->getId(), $order->getAllData());
         if ($id) {
@@ -117,5 +118,6 @@ class OrdersRepository extends DefaultRepository
         foreach ($order->getPayments() as $payment) {
             $this->getDb()->insert($this->appendTablePrefix('order_payment'), ['order_id' => $order->getId(), 'payment_id' => $payment->getId()]);
         }
+        $this->getDb()->endTransaction();
     }
 }
