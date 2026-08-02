@@ -21,7 +21,7 @@ class OrderLineItem implements SavableInterface
     private ?OrderLineItemType $type = null;
     #[OneToOne(targetModel: ProductVersion::class), FieldName('product_version_id')]
     private ?ProductVersion $productVersion = null;
-    #[OneToOne(targetModel: ProductVersion::class), FieldName('product_version_id')]
+    #[OneToOne(targetModel: OrderItemStatus::class), FieldName('status_id')]
     private ?OrderItemStatus $status = null;
     #[OneToOne(targetModel: ProductVatRate::class), FieldName('vat_rate_id')]
     private ?ProductVatRate $vatRate = null;
