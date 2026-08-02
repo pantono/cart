@@ -78,7 +78,7 @@ class OrdersRepository extends DefaultRepository
     {
         $select = $this->getDb()->select('p.*')->from($this->appendTablePrefix('order_payment'), 'op')
             ->innerJoin('op', 'payment', 'p', 'op.payment_id = p.id')
-            ->where('op..order_id=:order_id')
+            ->andWhere('op.order_id=:order_id')
             ->setParameter('order_id', $order->getId());
 
         return $this->getDb()->fetchAll($select);
