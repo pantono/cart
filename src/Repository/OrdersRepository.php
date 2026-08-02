@@ -99,7 +99,10 @@ class OrdersRepository extends DefaultRepository
             $this->getDb()->update($orderTable, ['reference' => $order->getReference()], ['id' => $order->getId()]);
         }
         $itemIds = [];
-        $deleteQb = $this->getDb()->createQueryBuilder()->delete($this->appendTablePrefix('order_line_item'))->andWhere('order_id=:id')->setParameter('id', $order->getId());
+        $deleteQb = $this->getDb()->createQueryBuilder()
+            ->delete($this->appendTablePrefix('order_line_item'))
+            ->andWhere('order_id=:id')
+            ->setParameter('id', $order->getId());
         foreach ($order->getItems() as $item) {
             $item->setOrderId($order->getId());
             $itemId = $this->insertOrUpdate($this->appendTablePrefix('order_line_item'), 'id', $item->getId(), $item->getAllData());
@@ -114,7 +117,7 @@ class OrdersRepository extends DefaultRepository
         }
         $deleteQb->executeQuery();
 
-        $this->getDb()->delete($this->appendTablePrefix('order_payment'), ['order_id=?' => $order->getId()]);
+        $this->getDb()->delete($this->appendTablePrefix('order_payment'), ['order_id' => $order->getId()]);
         foreach ($order->getPayments() as $payment) {
             $this->getDb()->insert($this->appendTablePrefix('order_payment'), ['order_id' => $order->getId(), 'payment_id' => $payment->getId()]);
         }
