@@ -112,4 +112,18 @@ class ShoppingCartRepository extends DefaultRepository
 
         return $this->getDb()->fetchRow($select);
     }
+
+    public function getActiveStockReservationsForProductId(int $id): int
+    {
+        $select = $this->getDb()->select('count(1) as count')->from($this->pt('cart_stock_reservation'), 'sr')
+            ->andWhere('sr.product_id=:id')
+            ->andWhere('sr.date_expires > NOW()')
+            ->setParameter('id', $id);
+
+        $count = $this->getDb()->fetchRow($select);
+        if (!$count) {
+            return 0;
+        }
+        return (int)$count['count'];
+    }
 }

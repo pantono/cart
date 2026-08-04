@@ -29,6 +29,10 @@ use Pantono\Cart\Model\OrderLineItemType;
 use Pantono\Cart\Model\OrderItemStatus;
 use Pantono\Cart\Exception\CartValidationFailedException;
 use Pantono\Cart\Model\OrderStatus;
+use Pantono\Products\Model\ProductVersion;
+use Pantono\Cart\Event\PreAddProductToCartEvent;
+use Pantono\Cart\Event\PostAddProductToCartEvent;
+use Pantono\Cart\Model\CartStockReservation;
 
 class ShoppingCart
 {
@@ -143,6 +147,34 @@ class ShoppingCart
     public function getActiveSpeeds(): array
     {
         return $this->hydrator->hydrateSet(DeliverySpeed::class, $this->repository->getActiveSpeeds());
+    }
+
+    public function saveCartStockReservation(CartStockReservation $reservation): void
+    {
+        $this->repository->saveModel($reservation);
+    }
+
+    public function getStockReservationCountForProductId(int $id): int
+    {
+        return $this->repository->getActiveStockReservationsForProductId($id);
+    }
+
+    public function addProductToCart(ProductVersion $version, Cart $cart, int $quantity): void
+    {
+        $event = new PreAddProductToCartEvent();
+        $event->setCart($cart);
+        $event->setVersion($version);
+        $event->setQuantity($quantity);
+        $this->dispatcher->dispatch($event);
+
+        $cart->addProduct($version->getParentProduct(), $quantity);
+        $this->saveCart($cart);
+
+        $event = new PostAddProductToCartEvent();
+        $event->setCart($cart);
+        $event->setVersion($version);
+        $event->setQuantity($quantity);
+        $this->dispatcher->dispatch($event);
     }
 
     public function saveDeliverySpeed(DeliverySpeed $speed): void

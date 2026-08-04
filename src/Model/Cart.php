@@ -61,6 +61,11 @@ class Cart implements SavableInterface
     private array $availableSpeeds = [];
     #[OneToOne(targetModel: Order::class), FieldName('order_id')]
     private ?Order $order = null;
+    /**
+     * @var CartStockReservation[]
+     */
+    #[OneToMany(targetModel: CartStockReservation::class, mappedBy: 'cart_id')]
+    private array $stockReservations = [];
 
     public function getId(): ?int
     {
@@ -471,5 +476,18 @@ class Cart implements SavableInterface
     public function isValid(): bool
     {
         return empty($this->getValidationErrors());
+    }
+
+    /**
+     * @return CartStockReservation[]
+     */
+    public function getStockReservations(): array
+    {
+        return $this->stockReservations;
+    }
+
+    public function setStockReservations(array $stockReservations): void
+    {
+        $this->stockReservations = $stockReservations;
     }
 }

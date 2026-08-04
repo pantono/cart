@@ -1,2 +1,4 @@
 CheckCartSpeed:
   class: Pantono\Cart\Events\CheckCartSpeed
+CheckProductStockLevels:
+  class: Pantono\Cart\Events\CheckProductStockLevels
