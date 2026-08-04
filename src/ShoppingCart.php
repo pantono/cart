@@ -278,10 +278,24 @@ class ShoppingCart
             $lineItem->setPrice($version->getPrice());
             $lineItem->setStatus($lineTypePending);
             $lineItem->setVatRate($version->getVatRate());
+            if ($version->getCompany()) {
+                $lineItem->setCompany($version->getCompany());
+            }
             $order->addItem($lineItem);
         }
+        $itemTypeDelivery = $this->hydrator->lookupRecord(OrderLineItemType::class, Orders::LINE_TYPE_DELIVERY);
+        foreach ($cart->getItems() as $item) {
+            if ($item->getProduct()->getPublishedDraft()->getDeliveryPrice() === null) {
+                $lineItem = new OrderLineItem();
+                $lineItem->setType($itemTypeDelivery);
+                $lineItem->setQuantity(1);
+                $lineItem->setProductVersion($item->getProduct()->getPublishedDraft());
+                $lineItem->setPrice($item->getProduct()->getPublishedDraft()->getDeliveryPrice());
+                $lineItem->setVatRate($cart->getDeliveryCost()->getVatRate());
+                $order->addItem($lineItem);
+            }
+        }
         if ($cart->getDeliveryCost()) {
-            $itemTypeDelivery = $this->hydrator->lookupRecord(OrderLineItemType::class, Orders::LINE_TYPE_DELIVERY);
             $lineItem = new OrderLineItem();
             $lineItem->setType($itemTypeDelivery);
             $lineItem->setQuantity(1);

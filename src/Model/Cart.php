@@ -368,6 +368,9 @@ class Cart implements SavableInterface
 
     public function getDeliveryCost(): ?DeliveryCost
     {
+        if (!$this->getWeightsWithoutCosts()) {
+            return null;
+        }
         if (!$this->getShippingLocation() || !$this->getShippingLocation()->getCountry()) {
             return null;
         }
@@ -377,8 +380,22 @@ class Cart implements SavableInterface
         $country = $this->getShippingLocation()->getCountry();
         return array_find(
             $this->getDeliverySpeed()->getCosts(),
-            fn($cost) => $cost->getCountry()->getId() === $country->getId() && $cost->getSpeed()->getId() === $this->getDeliverySpeed()->getId()
+            fn(DeliveryCost $cost) => $cost->getCountry()->getId() === $country->getId()
+                && $cost->getSpeed()->getId() === $this->getDeliverySpeed()->getId()
+                && $cost->getMinWeight() <= $this->getWeightsWithoutCosts()
+                && $cost->getMaxWeight() >= $this->getWeightsWithoutCosts()
         );
+    }
+
+    public function getWeightsWithoutCosts(): float
+    {
+        $weight = 0;
+        foreach ($this->getItems() as $item) {
+            if ($item->getProduct()->getPublishedDraft()->getDeliveryPrice() === null) {
+                $weight += $item->getProduct()->getPublishedDraft()->getWeight();
+            }
+        }
+        return $weight;
     }
 
     public function getDiscount(): float

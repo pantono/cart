@@ -9,6 +9,7 @@ use Pantono\Contracts\Attributes\FieldName;
 use Pantono\Products\Model\ProductVatRate;
 use Pantono\Contracts\Application\Interfaces\SavableInterface;
 use Pantono\Database\Traits\SavableModel;
+use Pantono\Customers\Model\Company;
 
 #[DatabaseTable('order_line_item')]
 class OrderLineItem implements SavableInterface
@@ -31,6 +32,8 @@ class OrderLineItem implements SavableInterface
     private ?\DateTimeInterface $dateDispatched = null;
     private ?string $trackingNumber = null;
     private ?string $trackingType = null;
+    #[OneToOne(targetModel: Company::class), FieldName('company_id')]
+    private ?Company $company = null;
 
     public function getId(): ?int
     {
@@ -150,5 +153,15 @@ class OrderLineItem implements SavableInterface
     public function setTrackingType(?string $trackingType): void
     {
         $this->trackingType = $trackingType;
+    }
+
+    public function getCompany(): ?Company
+    {
+        return $this->company;
+    }
+
+    public function setCompany(?Company $company): void
+    {
+        $this->company = $company;
     }
 }

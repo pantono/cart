@@ -225,4 +225,15 @@ class Order implements SavableInterface
     {
         $this->payments[] = $payment;
     }
+
+    public function getTotalDeliveryCost(): float
+    {
+        $total = 0;
+        foreach ($this->getItems() as $item) {
+            if ($item->getType()->isDelivery()) {
+                $total += $item->getQuantity() * $item->getPrice();
+            }
+        }
+        return $total;
+    }
 }
