@@ -10,6 +10,6 @@ final class OrderItemCompanyMigration extends BasePantonoMigration
         $this->tablePrefix('order_line_item')
             ->addLinkedColumn('company_id', $this->addTablePrefix('company'), 'id', ['null' => true])
             ->addIndex('company_id')
-            ->create();
+            ->update();
     }
 }
