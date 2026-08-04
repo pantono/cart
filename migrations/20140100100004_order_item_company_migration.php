@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 use Pantono\Database\Migration\Base\BasePantonoMigration;
 
-final class SubOrdersMigration extends BasePantonoMigration
+final class OrderItemCompanyMigration extends BasePantonoMigration
 {
     public function change(): void
     {
