@@ -285,7 +285,7 @@ class ShoppingCart
         }
         $itemTypeDelivery = $this->hydrator->lookupRecord(OrderLineItemType::class, Orders::LINE_TYPE_DELIVERY);
         foreach ($cart->getItems() as $item) {
-            if ($item->getProduct()->getPublishedDraft()->getDeliveryPrice() === null) {
+            if ($item->getProduct()->getPublishedDraft()->getDeliveryPrice() !== null) {
                 $lineItem = new OrderLineItem();
                 $lineItem->setType($itemTypeDelivery);
                 $lineItem->setQuantity(1);
