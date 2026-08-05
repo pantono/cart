@@ -164,4 +164,9 @@ class OrderLineItem implements SavableInterface
     {
         $this->company = $company;
     }
+
+    public function getLineTotal(): float
+    {
+        return $this->getQuantity() * $this->getPrice();
+    }
 }
