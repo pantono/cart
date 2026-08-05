@@ -203,6 +203,95 @@ class Order implements SavableInterface
         $this->items = $items;
     }
 
+    /**
+     * @return OrderLineItem[]
+     */
+    public function getProductItems(): array
+    {
+        $items = [];
+        foreach ($this->getItems() as $item) {
+            if ($item->getType()->isProduct()) {
+                $items[] = $item;
+            }
+        }
+        return $items;
+    }
+
+    /**
+     * @param int $id
+     * @return OrderLineItem[]
+     */
+    public function getDeliveryItems(int $id): array
+    {
+        $items = [];
+        foreach ($this->getItems() as $item) {
+            if ($item->getType()->isDelivery()) {
+                $items[] = $item;
+            }
+        }
+        return $items;
+    }
+
+    /**
+     * @return OrderLineItem[]
+     */
+    public function getDiscountItems(): array
+    {
+        $items = [];
+        foreach ($this->getItems() as $item) {
+            if ($item->getType()->isDiscount()) {
+                $items[] = $item;
+            }
+        }
+        return $items;
+    }
+
+    public function getSubTotal(): float
+    {
+        $total = 0;
+        foreach ($this->getProductItems() as $item) {
+            $total += $item->getQuantity() * $item->getPrice();
+        }
+        return $total;
+    }
+
+    public function getDeliveryTotal(): float
+    {
+        $total = 0;
+        foreach ($this->getDeliveryItems() as $item) {
+            $total += $item->getQuantity() * $item->getPrice();
+        }
+        return $total;
+    }
+
+    public function getDiscountTotal(): float
+    {
+        $total = 0;
+        foreach ($this->getDiscountItems() as $item) {
+            $total += $item->getQuantity() * $item->getPrice();
+        }
+        return $total;
+    }
+
+    public function getGrandTotal(): float
+    {
+        $total = 0;
+        foreach ($this->getItems() as $item) {
+            $total += $item->getQuantity() * $item->getPrice();
+        }
+        return $total;
+    }
+
+    public function getVatTotal(): float
+    {
+        $total = 0;
+        foreach ($this->getItems() as $item) {
+            $total += ($item->getQuantity() * $item->getPrice()) * $item->getVatRate()->getRate();
+        }
+        return $total;
+    }
+
+
     public function addItem(OrderLineItem $item): void
     {
         $this->items[] = $item;
