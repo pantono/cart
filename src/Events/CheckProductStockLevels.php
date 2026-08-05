@@ -25,7 +25,7 @@ class CheckProductStockLevels implements EventSubscriberInterface
         ];
     }
 
-    public function checkSpeed(PreAddProductToCartEvent $event): void
+    public function checkStockLevels(PreAddProductToCartEvent $event): void
     {
         $product = $event->getVersion()->getParentProduct();
 
