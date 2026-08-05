@@ -60,6 +60,11 @@ class Orders
         return $this->hydrator->lookupRecord(Order::class, $id);
     }
 
+    public function getOrderByRef(string $ref): ?Order
+    {
+        return $this->hydrator->hydrate(Order::class, $this->repository->getOrderByRef($ref));
+    }
+
     /**
      * @param OrderFilter $filter
      * @return Order[]

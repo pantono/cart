@@ -131,4 +131,9 @@ class OrdersRepository extends DefaultRepository
     {
         return $this->selectAll($this->pt('order_folder'));
     }
+
+    public function getOrderByRef(string $reference): ?array
+    {
+        return $this->selectSingleRow($this->pt('order'), 'reference', $reference);
+    }
 }
