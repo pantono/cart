@@ -221,7 +221,7 @@ class Order implements SavableInterface
      * @param int $id
      * @return OrderLineItem[]
      */
-    public function getDeliveryItems(int $id): array
+    public function getDeliveryItems(): array
     {
         $items = [];
         foreach ($this->getItems() as $item) {
