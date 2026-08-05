@@ -28,12 +28,13 @@ class CheckProductStockLevels implements EventSubscriberInterface
     public function checkStockLevels(PreAddProductToCartEvent $event): void
     {
         $product = $event->getVersion()->getParentProduct();
+        if ($product) {
+            $stockHolding = $product->getStockHolding();
+            $pending = $this->cart->getStockReservationCountForProductId($product->getId());
 
-        $stockHolding = $product->getStockHolding();
-        $pending = $this->cart->getStockReservationCountForProductId($product->getId());
-
-        if ($pending + $event->getQuantity() > $stockHolding) {
-            throw new NotEnoughStock('Sorry, not enough stock available');
+            if ($pending + $event->getQuantity() > $stockHolding) {
+                throw new NotEnoughStock('Sorry, not enough stock available');
+            }
         }
     }
 }
