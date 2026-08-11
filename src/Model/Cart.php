@@ -477,6 +477,9 @@ class Cart implements SavableInterface
         if (!$this->getTelephone()) {
             $errors[] = ['field' => 'telephone', 'error' => 'Telephone is required'];
         }
+        if (!$this->getEmail()) {
+            $errors[] = ['field' => 'email', 'error' => 'E-mail address is required'];
+        }
         if (!$this->getShippingLocation()) {
             $errors[] = ['field' => 'shipping_location', 'error' => 'Shipping location is required'];
         }
