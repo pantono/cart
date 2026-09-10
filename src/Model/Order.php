@@ -319,6 +319,11 @@ class Order implements SavableInterface
         return $total;
     }
 
+    public function isPaid(): bool
+    {
+        return $this->getPaymentTotal() >= $this->getGrandTotal();
+    }
+
     public function addPayment(Payment $payment): void
     {
         $this->payments[] = $payment;
