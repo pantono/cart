@@ -310,6 +310,15 @@ class Order implements SavableInterface
         $this->payments = $payments;
     }
 
+    public function getPaymentTotal(): float
+    {
+        $total = 0;
+        foreach ($this->getPayments() as $payment) {
+            $total += $payment->getAmount();
+        }
+        return $total;
+    }
+
     public function addPayment(Payment $payment): void
     {
         $this->payments[] = $payment;
