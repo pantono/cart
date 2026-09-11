@@ -6,6 +6,8 @@ use Pantono\Contracts\Attributes\DatabaseTable;
 use Pantono\Authentication\Model\User;
 use Pantono\Contracts\Application\Interfaces\SavableInterface;
 use Pantono\Database\Traits\SavableModel;
+use Pantono\Contracts\Attributes\Database\OneToOne;
+use Pantono\Contracts\Attributes\FieldName;
 
 #[DatabaseTable('order_note')]
 class OrderNote implements SavableInterface
@@ -15,6 +17,7 @@ class OrderNote implements SavableInterface
     private ?int $id = null;
     private \DateTimeInterface $date;
     private int $orderId;
+    #[OneToOne(targetModel: User::class), FieldName('user_id')]
     private ?User $user = null;
     private string $note;
 
