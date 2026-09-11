@@ -144,4 +144,9 @@ class OrdersRepository extends DefaultRepository
     {
         return $this->selectSingleRow($this->pt('order'), 'reference', $reference);
     }
+
+    public function getAllStatuses(): array
+    {
+        return $this->selectAll($this->pt('order_status'));
+    }
 }

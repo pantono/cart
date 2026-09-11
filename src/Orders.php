@@ -59,6 +59,14 @@ class Orders
         return $this->hydrator->hydrateSet(OrderFolder::class, $this->repository->getAllFolders());
     }
 
+    /**
+     * @return OrderStatus[]
+     */
+    public function getAllStatuses(): array
+    {
+        return $this->hydrator->hydrateSet(OrderStatus::class, $this->repository->getAllStatuses());
+    }
+
     public function getOrderById(int $id): ?Order
     {
         return $this->hydrator->lookupRecord(Order::class, $id);
