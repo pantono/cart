@@ -56,6 +56,11 @@ class Order implements SavableInterface
      */
     #[ManyToMany(joinTable: 'order_flag', joinColumn: 'order_id', inverseJoinColumn: 'flag_type_id', targetModel: OrderFlagType::class)]
     private array $flags = [];
+    /**
+     * @var OrderNote[]
+     */
+    #[OneToMany(targetModel: OrderNote::class, mappedBy: 'order_id')]
+    private array $notes = [];
 
     public function getId(): ?int
     {
@@ -337,6 +342,19 @@ class Order implements SavableInterface
     public function setPayments(array $payments): void
     {
         $this->payments = $payments;
+    }
+
+    /**
+     * @return OrderNote[]
+     */
+    public function getNotes(): array
+    {
+        return $this->notes;
+    }
+
+    public function setNotes(array $notes): void
+    {
+        $this->notes = $notes;
     }
 
     public function getPaymentTotal(): float

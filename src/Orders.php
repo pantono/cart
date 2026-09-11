@@ -12,6 +12,10 @@ use Pantono\Cart\Event\PreOrderSaveEvent;
 use Pantono\Cart\Event\PostOrderSaveEvent;
 use Pantono\Cart\Model\OrderStatus;
 use Pantono\Cart\Model\OrderFolder;
+use Pantono\Authentication\Model\User;
+use Pantono\Cart\Model\OrderNote;
+use Pantono\Cart\Event\PreOrderNoteSaveEvent;
+use Pantono\Cart\Event\PostOrderNoteSaveEvent;
 
 class Orders
 {
@@ -95,6 +99,34 @@ class Orders
 
         $event = new PostOrderSaveEvent();
         $event->setCurrent($order);
+        $event->setPrevious($previous);
+        $this->dispatcher->dispatch($event);
+    }
+
+    public function addNoteToOrder(Order $order, User $user, string $noteText): OrderNote
+    {
+        $note = new OrderNote();
+        $note->setOrderId($order->getId());
+        $note->setDate(new \DateTimeImmutable());
+        $note->setUser($user);
+        $note->setNote($noteText);
+
+        $this->saveOrderNote($note);
+        return $note;
+    }
+
+    public function saveOrderNote(OrderNote $note): void
+    {
+        $previous = $note->getId() ? $this->hydrator->lookupRecord(OrderNote::class, $note->getId()) : null;
+        $event = new PreOrderNoteSaveEvent();
+        $event->setCurrent($note);
+        $event->setPrevious($previous);
+        $this->dispatcher->dispatch($event);
+
+        $this->repository->saveModel($note);
+
+        $event = new PostOrderNoteSaveEvent();
+        $event->setCurrent($note);
         $event->setPrevious($previous);
         $this->dispatcher->dispatch($event);
     }
