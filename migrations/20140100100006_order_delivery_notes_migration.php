@@ -9,6 +9,6 @@ final class OrderDeliveryNotesMigration extends BasePantonoMigration
     {
         $this->table('order')
             ->addColumn('delivery_notes', 'text', ['null' => true])
-            ->create();
+            ->update();
     }
 }
