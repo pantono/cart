@@ -40,6 +40,7 @@ class Order implements SavableInterface
     private string $surname;
     private string $email;
     private string $telephone;
+    private ?string $deliveryNotes = null;
     /**
      * @var OrderLineItem[]
      */
@@ -194,6 +195,16 @@ class Order implements SavableInterface
     public function setTelephone(string $telephone): void
     {
         $this->telephone = $telephone;
+    }
+
+    public function getDeliveryNotes(): ?string
+    {
+        return $this->deliveryNotes;
+    }
+
+    public function setDeliveryNotes(?string $deliveryNotes): void
+    {
+        $this->deliveryNotes = $deliveryNotes;
     }
 
     /**
