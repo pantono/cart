@@ -13,6 +13,7 @@ use Pantono\Contracts\Attributes\Locator;
 use Pantono\Payments\Model\Payment;
 use Pantono\Cart\Orders;
 use Pantono\Contracts\Attributes\DatabaseTable;
+use Pantono\Contracts\Attributes\Database\ManyToMany;
 
 #[DatabaseTable('order')]
 class Order implements SavableInterface
@@ -49,6 +50,11 @@ class Order implements SavableInterface
      */
     #[Locator(methodName: 'getPaymentsForOrder', className: Orders::class), FieldName('$this')]
     private array $payments = [];
+    /**
+     * @var OrderFlagType[]
+     */
+    #[ManyToMany(joinTable: 'order_flag', joinColumn: 'order_id', inverseJoinColumn: 'flag_type_id', targetModel: OrderFlagType::class)]
+    private array $flags = [];
 
     public function getId(): ?int
     {
@@ -218,7 +224,6 @@ class Order implements SavableInterface
     }
 
     /**
-     * @param int $id
      * @return OrderLineItem[]
      */
     public function getDeliveryItems(): array
@@ -295,6 +300,19 @@ class Order implements SavableInterface
     public function addItem(OrderLineItem $item): void
     {
         $this->items[] = $item;
+    }
+
+    /**
+     * @return OrderFlagType[]
+     */
+    public function getFlags(): array
+    {
+        return $this->flags;
+    }
+
+    public function setFlags(array $flags): void
+    {
+        $this->flags = $flags;
     }
 
     /**

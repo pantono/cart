@@ -121,6 +121,11 @@ class OrdersRepository extends DefaultRepository
         foreach ($order->getPayments() as $payment) {
             $this->getDb()->insert($this->appendTablePrefix('order_payment'), ['order_id' => $order->getId(), 'payment_id' => $payment->getId()]);
         }
+
+        $this->getDb()->delete($this->appendTablePrefix('order_flag'), ['order_id' => $order->getId()]);
+        foreach ($order->getFlags() as $flag) {
+            $this->getDb()->insert($this->appendTablePrefix('order_flag'), ['order_id' => $order->getId(), 'flag_type_id' => $flag->getId()]);
+        }
         $this->getDb()->endTransaction();
     }
 
@@ -132,6 +137,9 @@ class OrdersRepository extends DefaultRepository
         return $this->selectAll($this->pt('order_folder'));
     }
 
+    /**
+     * @return ?array<mixed>
+     */
     public function getOrderByRef(string $reference): ?array
     {
         return $this->selectSingleRow($this->pt('order'), 'reference', $reference);
