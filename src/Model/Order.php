@@ -361,7 +361,9 @@ class Order implements SavableInterface
     {
         $total = 0;
         foreach ($this->getPayments() as $payment) {
-            $total += $payment->getAmount();
+            if ($payment->getStatus()->isCompleted()) {
+                $total += $payment->getAmount();
+            }
         }
         return $total;
     }
