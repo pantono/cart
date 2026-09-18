@@ -140,6 +140,33 @@ class ShoppingCart
         return $speeds;
     }
 
+    /**
+     * @return DeliverySpeed[]
+     */
+    public function getAvailableSpeedsForOrder(Order $order): array
+    {
+        $speeds = [];
+        $weight = $order->getTotalWeight();
+        if (!$order->getDeliveryLocation()) {
+            return [];
+        }
+        foreach ($this->getActiveSpeeds() as $speed) {
+            $available = false;
+            foreach ($speed->getCosts() as $cost) {
+                if ($cost->getCountry()->getId() !== $order->getDeliveryLocation()->getCountry()->getId()) {
+                    continue;
+                }
+                if ($weight >= $cost->getMinWeight() && $weight <= $cost->getMaxWeight()) {
+                    $available = true;
+                }
+            }
+            if ($available) {
+                $speeds[] = $speed;
+            }
+        }
+        return $speeds;
+    }
+
 
     /**
      * @return DeliverySpeed[]

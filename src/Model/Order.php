@@ -386,4 +386,15 @@ class Order implements SavableInterface
         }
         return $total;
     }
+
+    public function getTotalWeight(): float
+    {
+        $weight = 0;
+        foreach ($this->getItems() as $item) {
+            if ($item->getType()->isProduct()) {
+                $weight += $item->getQuantity() * $item->getProductVersion()->getWeight();
+            }
+        }
+        return $weight;
+    }
 }
