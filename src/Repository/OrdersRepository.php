@@ -7,6 +7,7 @@ use Pantono\Cart\Filter\OrderFilter;
 use Pantono\Cart\Model\Order;
 use Pantono\Core\Helper\ConfigHelper;
 use Doctrine\DBAL\ArrayParameterType;
+use Pantono\Payments\Model\Payment;
 
 class OrdersRepository extends DefaultRepository
 {
@@ -148,5 +149,14 @@ class OrdersRepository extends DefaultRepository
     public function getAllStatuses(): array
     {
         return $this->selectAll($this->pt('order_status'));
+    }
+
+    public function getOrderFromPayment(Payment $payment): ?array
+    {
+        $select = $this->getDb()->select('o.*')->from('order_payment', 'op')
+            ->innerJoin('op', 'order', 'o', 'o.id=op.order_id')
+            ->andWhere('op.payment_id = ?', $payment->getId());
+
+        return $this->getDb()->fetchRow($select);
     }
 }

@@ -138,4 +138,9 @@ class Orders
         $event->setPrevious($previous);
         $this->dispatcher->dispatch($event);
     }
+
+    public function getOrderFromPayment(Payment $payment)
+    {
+        return $this->hydrator->hydrate(Order::class, $this->repository->getOrderFromPayment($payment));
+    }
 }
