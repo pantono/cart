@@ -307,7 +307,11 @@ class Order implements SavableInterface
     {
         $total = 0;
         foreach ($this->getItems() as $item) {
-            $total += ($item->getQuantity() * $item->getPrice()) * $item->getVatRate()->getRate();
+            if ($item->getVatRate()) {
+                $total += ($item->getQuantity() * $item->getPrice()) * $item->getVatRate()->getRate();
+            } else {
+                $total += ($item->getQuantity() * $item->getPrice());
+            }
         }
         return $total;
     }

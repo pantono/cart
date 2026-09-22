@@ -33,6 +33,7 @@ use Pantono\Products\Model\ProductVersion;
 use Pantono\Cart\Event\PreAddProductToCartEvent;
 use Pantono\Cart\Event\PostAddProductToCartEvent;
 use Pantono\Cart\Model\CartStockReservation;
+use Pantono\Products\Products;
 
 class ShoppingCart
 {
@@ -40,13 +41,21 @@ class ShoppingCart
     private Hydrator $hydrator;
     private EventDispatcher $dispatcher;
     private Customers $customers;
+    private Products $products;
 
-    public function __construct(ShoppingCartRepository $repository, Hydrator $hydrator, EventDispatcher $dispatcher, Customers $customers)
+    public function __construct(
+        ShoppingCartRepository $repository,
+        Hydrator               $hydrator,
+        EventDispatcher        $dispatcher,
+        Customers              $customers,
+        Products               $products
+    )
     {
         $this->repository = $repository;
         $this->hydrator = $hydrator;
         $this->dispatcher = $dispatcher;
         $this->customers = $customers;
+        $this->products = $products;
     }
 
     public function getActiveCartForSession(string $sessionId): ?Cart
@@ -318,6 +327,9 @@ class ShoppingCart
                 $lineItem->setQuantity(1);
                 $lineItem->setProductVersion($item->getProduct()->getPublishedDraft());
                 $lineItem->setPrice($item->getProduct()->getPublishedDraft()->getDeliveryPrice());
+                if (!$cart->getDeliveryCost()->getVatRate()) {
+                    throw new \RuntimeException('Cart delivery not set');
+                }
                 $lineItem->setVatRate($cart->getDeliveryCost()->getVatRate());
                 $order->addItem($lineItem);
             }
@@ -337,6 +349,11 @@ class ShoppingCart
             $lineItem->setType($itemTypeDiscount);
             $lineItem->setQuantity(1);
             $lineItem->setPrice($cart->getDiscount());
+            $vatRate = $this->products->getDefaultVatRate();
+            if (!$vatRate) {
+                throw new \RuntimeException('Unable to find default VAT rate');
+            }
+            $lineItem->setVatRate($vatRate);
             $order->addItem($lineItem);
         }
 
