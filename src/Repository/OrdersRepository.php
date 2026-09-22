@@ -154,8 +154,9 @@ class OrdersRepository extends DefaultRepository
     public function getOrderFromPayment(Payment $payment): ?array
     {
         $select = $this->getDb()->select('o.*')->from('order_payment', 'op')
-            ->innerJoin('op', 'order', 'o', 'o.id=op.order_id')
-            ->andWhere('op.payment_id = ?', $payment->getId());
+            ->innerJoin('op', $this->quoteTable('order'), 'o', 'o.id=op.order_id')
+            ->andWhere('op.payment_id = :payment_id')
+            ->setParameter('payment_id', $payment->getId());
 
         return $this->getDb()->fetchRow($select);
     }
