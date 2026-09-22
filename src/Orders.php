@@ -24,7 +24,7 @@ class Orders
     private EventDispatcher $dispatcher;
     public const int LINE_TYPE_PRODUCT = 1;
     public const int LINE_TYPE_DELIVERY = 2;
-    public const int LINE_TYPE_DISCOUNT = 2;
+    public const int LINE_TYPE_DISCOUNT = 3;
     public const int LINE_STATUS_PENDING = 1;
     public const int LINE_STATUS_DISPATCHED = 2;
 
