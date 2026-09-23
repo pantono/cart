@@ -33,7 +33,6 @@ use Pantono\Products\Model\ProductVersion;
 use Pantono\Cart\Event\PreAddProductToCartEvent;
 use Pantono\Cart\Event\PostAddProductToCartEvent;
 use Pantono\Cart\Model\CartStockReservation;
-use Pantono\Products\Products;
 
 class ShoppingCart
 {
@@ -41,21 +40,18 @@ class ShoppingCart
     private Hydrator $hydrator;
     private EventDispatcher $dispatcher;
     private Customers $customers;
-    private Products $products;
 
     public function __construct(
         ShoppingCartRepository $repository,
         Hydrator               $hydrator,
         EventDispatcher        $dispatcher,
-        Customers              $customers,
-        Products               $products
+        Customers              $customers
     )
     {
         $this->repository = $repository;
         $this->hydrator = $hydrator;
         $this->dispatcher = $dispatcher;
         $this->customers = $customers;
-        $this->products = $products;
     }
 
     public function getActiveCartForSession(string $sessionId): ?Cart
@@ -343,17 +339,16 @@ class ShoppingCart
             $order->addItem($lineItem);
         }
 
-        if ($cart->getDiscount()) {
+        foreach ($cart->getDiscountVatBreakdown() as $discount) {
+            if ($discount['amount'] == 0) {
+                continue;
+            }
             $lineItem = new OrderLineItem();
             $itemTypeDiscount = $this->hydrator->lookupRecord(OrderLineItemType::class, Orders::LINE_TYPE_DISCOUNT);
             $lineItem->setType($itemTypeDiscount);
             $lineItem->setQuantity(1);
-            $lineItem->setPrice($cart->getDiscount());
-            $vatRate = $this->products->getDefaultVatRate();
-            if (!$vatRate) {
-                throw new \RuntimeException('Unable to find default VAT rate');
-            }
-            $lineItem->setVatRate($vatRate);
+            $lineItem->setPrice($discount['amount']);
+            $lineItem->setVatRate($discount['vat_rate']);
             $order->addItem($lineItem);
         }
 

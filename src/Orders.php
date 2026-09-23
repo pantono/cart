@@ -139,7 +139,7 @@ class Orders
         $this->dispatcher->dispatch($event);
     }
 
-    public function getOrderFromPayment(Payment $payment)
+    public function getOrderFromPayment(Payment $payment): ?Order
     {
         return $this->hydrator->hydrate(Order::class, $this->repository->getOrderFromPayment($payment));
     }

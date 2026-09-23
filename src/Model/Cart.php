@@ -13,6 +13,7 @@ use Pantono\Cart\ShoppingCart;
 use Pantono\Products\Model\DiscountCode;
 use Pantono\Payments\Model\Payment;
 use Pantono\Products\Model\Product;
+use Pantono\Products\Model\ProductVatRate;
 use Pantono\Contracts\Attributes\FieldName;
 use Pantono\Locations\Model\Location;
 use Pantono\Cart\Exception\NotEnoughStock;
@@ -350,7 +351,7 @@ class Cart implements SavableInterface
     public function getShippingCostGross(): ?float
     {
         $cost = $this->getDeliveryCost();
-        return $cost?->getVatRate()->addToPrice($cost->getCost());
+        return $cost?->getVatRate()?->addToPrice($cost->getCost()) ?? $cost?->getCost();
     }
 
     public function getVat(): float
@@ -358,12 +359,16 @@ class Cart implements SavableInterface
         $vat = 0;
         foreach ($this->getItems() as $item) {
             $version = $item->getProduct()->getPublishedDraft();
-            $vat += $version->getVatRate()->calculateVat($version->getPrice());
+            $vat += $version->getPrice() * $item->getQuantity() * $version->getVatRate()->getRate();
         }
-        if ($this->getDeliveryCost()) {
-            $vat += $this->getDeliveryCost()->getVatRate()->calculateVat($this->getDeliveryCost()->getCost());
+        $delivery = $this->getDeliveryCost();
+        if ($delivery) {
+            $vat += $delivery->getCost() * ($delivery->getVatRate()?->getRate() ?? 0);
         }
-        return $vat;
+        foreach ($this->getDiscountVatBreakdown() as $discount) {
+            $vat -= $discount['amount'] * ($discount['vat_rate']?->getRate() ?? 0);
+        }
+        return round($vat, 2);
     }
 
     public function getDeliveryCost(): ?DeliveryCost
@@ -412,34 +417,83 @@ class Cart implements SavableInterface
      */
     public function getDiscountLineItems(): array
     {
+        return array_map(
+            fn(array $item) => ['name' => $item['name'], 'amount' => $item['amount']],
+            $this->getDiscountDetails()
+        );
+    }
+
+    /**
+     * @return array<int, array{name: string, amount: float, free_delivery: bool}>
+     */
+    private function getDiscountDetails(): array
+    {
         $lineItems = [];
         foreach ($this->getCodes() as $code) {
             $discount = $code->getCode()->getDiscount();
             if ($discount->getBase()->isFreeDelivery()) {
-                $lineItems[] = ['name' => 'Free Delivery (' . $code->getCode()->getCode() . ')', 'amount' => $this->getShippingCostNet()];
+                $lineItems[] = ['name' => 'Free Delivery (' . $code->getCode()->getCode() . ')', 'amount' => $this->getShippingCostNet() ?? 0, 'free_delivery' => true];
             }
             if ($discount->getBase()->isPercentage()) {
                 $net = $this->getItemTotalNet();
-                if ($discount->getMinSpend() && $net >= $discount->getMinSpend()) {
-                    $lineItems[] = ['name' => $discount->getName(), 'amount' => $net * ($discount->getAmount() / 100)];
+                if ($net >= ($discount->getMinSpend() ?? 0)) {
+                    $lineItems[] = ['name' => $discount->getName(), 'amount' => round($net * ($discount->getAmount() / 100), 2), 'free_delivery' => false];
                 }
             }
             if ($discount->getBase()->isAmount()) {
                 $net = $this->getItemTotalNet();
-                if ($discount->getMinSpend() && $net >= $discount->getMinSpend()) {
-                    $lineItems[] = ['name' => $discount->getName(), 'amount' => $discount->getAmount()];
+                if ($net >= ($discount->getMinSpend() ?? 0)) {
+                    $lineItems[] = ['name' => $discount->getName(), 'amount' => round($discount->getAmount() ?? 0, 2), 'free_delivery' => false];
                 }
             }
         }
         return $lineItems;
     }
 
+    /**
+     * Allocate net discounts to the VAT rates of the charges they reduce.
+     * These allocations are also persisted as discount lines when ordering.
+     *
+     * @return array<int, array{amount: float, vat_rate: ?ProductVatRate}>
+     */
+    public function getDiscountVatBreakdown(): array
+    {
+        $groups = [];
+        foreach ($this->getItems() as $item) {
+            $version = $item->getProduct()->getPublishedDraft();
+            $rate = $version->getVatRate();
+            $key = $rate->getId() === null ? 'rate:' . $rate->getRate() : 'id:' . $rate->getId();
+            $groups[$key] ??= ['amount' => 0, 'vat_rate' => $rate];
+            $groups[$key]['amount'] += $version->getPrice() * $item->getQuantity();
+        }
+
+        $allocations = [];
+        $net = $this->getItemTotalNet();
+        foreach ($this->getDiscountDetails() as $discount) {
+            if ($discount['free_delivery']) {
+                $allocations[] = ['amount' => $discount['amount'], 'vat_rate' => $this->getDeliveryCost()?->getVatRate()];
+                continue;
+            }
+            if ($net <= 0) {
+                $allocations[] = ['amount' => $discount['amount'], 'vat_rate' => null];
+                continue;
+            }
+            // Cumulative rounding keeps allocations equal to the discount to the penny.
+            $cumulativeNet = 0;
+            $allocated = 0;
+            foreach ($groups as $group) {
+                $cumulativeNet += $group['amount'];
+                $target = round($discount['amount'] * $cumulativeNet / $net, 2);
+                $allocations[] = ['amount' => round($target - $allocated, 2), 'vat_rate' => $group['vat_rate']];
+                $allocated = $target;
+            }
+        }
+        return $allocations;
+    }
+
     public function getGrandTotal(): float
     {
-        if ($this->getDeliveryCost()) {
-            return $this->getItemTotalNet() + $this->getShippingCostNet() - $this->getDiscount() + $this->getVat();
-        }
-        return $this->getItemTotalGross() - $this->getDiscount();
+        return round($this->getItemTotalNet() + ($this->getShippingCostNet() ?? 0) - $this->getDiscount() + $this->getVat(), 2);
     }
 
     public function checkSpeed(): void

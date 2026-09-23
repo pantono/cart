@@ -167,26 +167,23 @@ class OrderLineItem implements SavableInterface
 
     public function getLineTotal(): float
     {
-        return $this->getQuantity() * $this->getPrice();
+        $price = $this->getType()?->isDiscount() ? -abs($this->getPrice()) : $this->getPrice();
+        return $this->getQuantity() * $price;
+    }
+
+    public function getLineVatTotal(): float
+    {
+        return $this->getLineTotal() * ($this->getVatRate()?->getRate() ?? 0);
     }
 
     public function getItemPriceIncVat(): float
     {
-        $price = $this->getPrice();
-        if ($this->getVatRate()) {
-            $price = $this->getPrice() * $this->getVatRate()->getRate();
-        }
-        if ($this->getType()->isDiscount()) {
-            $price = $price - ($price * 2);
-        }
-        return $price;
+        $price = $this->getType()?->isDiscount() ? -abs($this->getPrice()) : $this->getPrice();
+        return $this->getVatRate()?->addToPrice($price) ?? $price;
     }
 
     public function getLineTotalIncVat(): float
     {
-        if ($this->getVatRate()) {
-            return ($this->getPrice() * $this->getQuantity()) * $this->getVatRate()->getRate();
-        }
-        return $this->getPrice();
+        return $this->getLineTotal() + $this->getLineVatTotal();
     }
 }
