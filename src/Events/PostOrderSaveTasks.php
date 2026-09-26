@@ -30,7 +30,7 @@ class PostOrderSaveTasks implements EventSubscriberInterface
     {
         $order = $event->getCurrent();
         if (!$event->getPrevious()) {
-            $this->logger->addLogForModel(Order::class, $order->getId(), 'Created new order');
+            $this->logger->addLogForModel(Order::class, (string)$order->getId(), 'Created new order');
             return;
         }
         $this->logger->autoLog($event->getCurrent(), $event->getPrevious());
