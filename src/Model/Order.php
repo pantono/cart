@@ -399,4 +399,31 @@ class Order implements SavableInterface
         }
         return $weight;
     }
+
+    /**
+     * @return array<string,mixed>
+     */
+    public function toArray(): array
+    {
+        $flags = [];
+        foreach ($this->getFlags() as $flag) {
+            $flags[] = $flag->getName();
+        }
+        return [
+            'id' => $this->getId(),
+            'date_created' => $this->getDateCreated()->format('Y-m-d H:i:s'),
+            'date_updated' => $this->getDateUpdated()->format('Y-m-d H:i:s'),
+            'reference' => $this->getReference(),
+            'status' => $this->getStatus()?->getName(),
+            'billing_location' => $this->getBillingLocation()->toArray(),
+            'delivery_location' => $this->getDeliveryLocation()->toArray(),
+            'delivery_speed' => $this->getDeliverySpeed()?->getName(),
+            'customer_id' => $this->getCustomer()?->getId(),
+            'forename' => $this->getForename(),
+            'surname' => $this->getSurname(),
+            'telephone' => $this->getTelephone(),
+            'delivery_notes' => $this->getDeliveryNotes(),
+            'flags' => $flags
+        ];
+    }
 }

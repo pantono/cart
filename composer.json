@@ -12,7 +12,8 @@
     "pantono/products": "^1.0",
     "pantono/locations": "^1.0",
     "pantono/payments": "^1.0",
-    "pantono/customers": "^1.0"
+    "pantono/customers": "^1.0",
+    "pantono/logger": "^1.0"
   },
   "require-dev": {
     "phpunit/phpunit": "^12",

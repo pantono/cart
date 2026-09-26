@@ -4,3 +4,5 @@ CheckProductStockLevels:
   class: Pantono\Cart\Events\CheckProductStockLevels
 ApplyRefundToOrder:
   class: Pantono\Cart\Events\ApplyRefundToOrder
+PostOrderSaveTasks:
+  class: Pantono\Cart\Events\PostOrderSaveTasks
