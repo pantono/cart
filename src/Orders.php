@@ -16,6 +16,7 @@ use Pantono\Authentication\Model\User;
 use Pantono\Cart\Model\OrderNote;
 use Pantono\Cart\Event\PreOrderNoteSaveEvent;
 use Pantono\Cart\Event\PostOrderNoteSaveEvent;
+use Pantono\Cart\Model\OrderFlagType;
 
 class Orders
 {
@@ -142,5 +143,18 @@ class Orders
     public function getOrderFromPayment(Payment $payment): ?Order
     {
         return $this->hydrator->hydrate(Order::class, $this->repository->getOrderFromPayment($payment));
+    }
+
+    public function getOrderFlagTypeById(int $id): ?OrderFlagType
+    {
+        return $this->hydrator->lookupRecord(OrderFlagType::class, $id);
+    }
+
+    /**
+     * @return OrderFlagType[]
+     */
+    public function getAllOrderFlagTypes(): array
+    {
+        return $this->hydrator->lookupAll(OrderFlagType::class);
     }
 }
