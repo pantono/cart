@@ -51,7 +51,7 @@ class OrdersRepository extends DefaultRepository
                 ->setParameter('status_id', $filter->getStatus()->getId());
         }
         if ($filter->getFolder() !== null) {
-            $select->where('o.folder_id=:folder_id')
+            $select->where('o.order_folder_id=:folder_id')
                 ->setParameter('folder_id', $filter->getFolder()->getId());
         }
         if ($filter->getName() !== null) {
