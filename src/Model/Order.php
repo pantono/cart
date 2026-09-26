@@ -414,6 +414,7 @@ class Order implements SavableInterface
             'date_created' => $this->getDateCreated()->format('Y-m-d H:i:s'),
             'date_updated' => $this->getDateUpdated()->format('Y-m-d H:i:s'),
             'reference' => $this->getReference(),
+            'folder' => $this->getFolder()?->getName(),
             'status' => $this->getStatus()?->getName(),
             'billing_location' => $this->getBillingLocation()->toArray(),
             'delivery_location' => $this->getDeliveryLocation()->toArray(),
