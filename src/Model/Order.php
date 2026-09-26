@@ -12,8 +12,9 @@ use Pantono\Database\Traits\SavableModel;
 use Pantono\Payments\Model\Payment;
 use Pantono\Contracts\Attributes\DatabaseTable;
 use Pantono\Contracts\Attributes\Database\ManyToMany;
+use Pantono\Contracts\Attributes\EagerLoad;
 
-#[DatabaseTable('order')]
+#[DatabaseTable('order'), EagerLoad]
 class Order implements SavableInterface
 {
     use SavableModel;
