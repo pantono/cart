@@ -150,6 +150,11 @@ class Orders
         return $this->hydrator->lookupRecord(OrderFlagType::class, $id);
     }
 
+    public function getOrderFlagTypeByName(string $name): ?OrderFlagType
+    {
+        return $this->hydrator->hydrate(OrderFlagType::class, $this->repository->getOrderFlagTypeByName($name));
+    }
+
     /**
      * @return OrderFlagType[]
      */

@@ -146,11 +146,17 @@ class OrdersRepository extends DefaultRepository
         return $this->selectSingleRow($this->pt('order'), 'reference', $reference);
     }
 
+    /**
+     * @return array<int,mixed>
+     */
     public function getAllStatuses(): array
     {
         return $this->selectAll($this->pt('order_status'));
     }
 
+    /**
+     * @return array<string,mixed>|null
+     */
     public function getOrderFromPayment(Payment $payment): ?array
     {
         $select = $this->getDb()->select('o.*')->from('order_payment', 'op')
@@ -159,5 +165,13 @@ class OrdersRepository extends DefaultRepository
             ->setParameter('payment_id', $payment->getId());
 
         return $this->getDb()->fetchRow($select);
+    }
+
+    /**
+     * @return ?array<int, mixed>
+     */
+    public function getOrderFlagTypeByName(string $name): ?array
+    {
+        return $this->selectSingleRow('order_flag_type', 'name', $name);
     }
 }

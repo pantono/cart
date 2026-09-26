@@ -262,10 +262,10 @@ class Cart implements SavableInterface
                 return false;
             }
         }
-        if ($code->getStartDate() && $code->getStartDate() > new \DateTime) {
+        if ($code->getStartDate() > new \DateTime) {
             return false;
         }
-        if ($code->getEndDate() && $code->getEndDate() < new \DateTime) {
+        if ($code->getEndDate() < new \DateTime) {
             return false;
         }
         $codes = $this->getCodes();

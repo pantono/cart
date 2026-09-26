@@ -5,17 +5,14 @@ namespace Pantono\Cart\Events;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Pantono\Payments\Event\PostPaymentSaveEvent;
 use Pantono\Cart\Orders;
-use Pantono\Payments\Payments;
 
 class ApplyRefundToOrder implements EventSubscriberInterface
 {
     private Orders $orders;
-    private Payments $payments;
 
-    public function __construct(Orders $orders, Payments $payments)
+    public function __construct(Orders $orders)
     {
         $this->orders = $orders;
-        $this->payments = $payments;
     }
 
     public static function getSubscribedEvents(): array
