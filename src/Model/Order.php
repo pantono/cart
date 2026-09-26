@@ -9,9 +9,7 @@ use Pantono\Customers\Model\Customer;
 use Pantono\Contracts\Attributes\Database\OneToMany;
 use Pantono\Contracts\Application\Interfaces\SavableInterface;
 use Pantono\Database\Traits\SavableModel;
-use Pantono\Contracts\Attributes\Locator;
 use Pantono\Payments\Model\Payment;
-use Pantono\Cart\Orders;
 use Pantono\Contracts\Attributes\DatabaseTable;
 use Pantono\Contracts\Attributes\Database\ManyToMany;
 
@@ -49,7 +47,7 @@ class Order implements SavableInterface
     /**
      * @var Payment[]
      */
-    #[Locator(methodName: 'getPaymentsForOrder', className: Orders::class), FieldName('$this')]
+    #[ManyToMany(joinTable: 'order_payment', joinColumn: 'order_id', inverseJoinColumn: 'payment_id', targetModel: Payment::class)]
     private array $payments = [];
     /**
      * @var OrderFlagType[]
