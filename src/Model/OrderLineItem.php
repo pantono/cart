@@ -10,8 +10,9 @@ use Pantono\Products\Model\ProductVatRate;
 use Pantono\Contracts\Application\Interfaces\SavableInterface;
 use Pantono\Database\Traits\SavableModel;
 use Pantono\Customers\Model\Company;
+use Pantono\Contracts\Attributes\EagerLoad;
 
-#[DatabaseTable('order_line_item')]
+#[DatabaseTable('order_line_item'), EagerLoad]
 class OrderLineItem implements SavableInterface
 {
     use SavableModel;

@@ -3,8 +3,9 @@
 namespace Pantono\Cart\Model;
 
 use Pantono\Contracts\Attributes\DatabaseTable;
+use Pantono\Contracts\Attributes\EagerLoad;
 
-#[DatabaseTable('order_line_item_type')]
+#[DatabaseTable('order_line_item_type'), EagerLoad]
 class OrderLineItemType
 {
     private ?int $id = null;

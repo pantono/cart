@@ -8,8 +8,9 @@ use Pantono\Contracts\Application\Interfaces\SavableInterface;
 use Pantono\Database\Traits\SavableModel;
 use Pantono\Contracts\Attributes\Database\OneToOne;
 use Pantono\Contracts\Attributes\FieldName;
+use Pantono\Contracts\Attributes\EagerLoad;
 
-#[DatabaseTable('order_note')]
+#[DatabaseTable('order_note'), EagerLoad]
 class OrderNote implements SavableInterface
 {
     use SavableModel;
