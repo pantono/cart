@@ -8,12 +8,14 @@ use Pantono\Customers\Model\Company;
 use Pantono\Cart\Model\OrderStatus;
 use Pantono\Cart\Model\OrderFolder;
 use Pantono\Customers\Model\Customer;
+use Pantono\Database\Traits\ColumnFilter;
 
 class OrderFilter implements PageableInterface
 {
-    use Pageable;
+    use Pageable, ColumnFilter;
 
     private ?Company $company = null;
+    private ?array $companyIds = null;
     private ?Customer $customer = null;
     private ?\DateTimeInterface $datePlacedStart = null;
     private ?\DateTimeInterface $datePlacedEnd = null;
@@ -34,6 +36,16 @@ class OrderFilter implements PageableInterface
     public function setCompany(?Company $company): void
     {
         $this->company = $company;
+    }
+
+    public function getCompanyIds(): ?array
+    {
+        return $this->companyIds;
+    }
+
+    public function setCompanyIds(?array $companyIds): void
+    {
+        $this->companyIds = $companyIds;
     }
 
     public function getCustomer(): ?Customer
