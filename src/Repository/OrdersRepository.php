@@ -30,24 +30,29 @@ class OrdersRepository extends DefaultRepository
             ->groupBy('o.id');
 
 
+        $filter->applyColumnsToQueryBuilder($select);
         if ($filter->getCustomer() !== null) {
-            $select->where('o.customer_id=:customer_id')
+            $select->andWhere('o.customer_id=:customer_id')
                 ->setParameter('customer_id', $filter->getCustomer()->getId());
         }
         if ($filter->getCompany() !== null) {
-            $select->where('pv.company_id=:company_id')
+            $select->andWhere('pv.company_id=:company_id')
                 ->setParameter('company_id', $filter->getCompany()->getId());
         }
+        if ($filter->getCompanyIds() !== null) {
+            $select->andWhere('pv.company_id in (:companies)')
+                ->setParameter('companies', $filter->getCompanyIds(), ArrayParameterType::INTEGER);
+        }
         if ($filter->getDatePlacedStart() !== null) {
-            $select->where('o.date_created >= :date_placed_start')
+            $select->andWhere('o.date_created >= :date_placed_start')
                 ->setParameter('date_placed_start', $filter->getDatePlacedStart()->format('Y-m-d H:i:s'));
         }
         if ($filter->getDatePlacedEnd() !== null) {
-            $select->where('o.date_created <= :date_placed_end')
+            $select->andWhere('o.date_created <= :date_placed_end')
                 ->setParameter('date_placed_end', $filter->getDatePlacedEnd()->format('Y-m-d H:i:s'));
         }
         if ($filter->getStatus() !== null) {
-            $select->where('o.status_id=:status_id')
+            $select->andWhere('o.status_id=:status_id')
                 ->setParameter('status_id', $filter->getStatus()->getId());
         }
         if ($filter->getFolder() !== null) {
@@ -55,15 +60,15 @@ class OrdersRepository extends DefaultRepository
                 ->setParameter('folder_id', $filter->getFolder()->getId());
         }
         if ($filter->getName() !== null) {
-            $select->where('o.name LIKE :name')
+            $select->andWhere('o.name LIKE :name')
                 ->setParameter('name', '%' . $filter->getName() . '%');
         }
         if ($filter->getOrderRef() !== null) {
-            $select->where('o.order_ref LIKE :order_ref')
+            $select->andWhere('o.order_ref LIKE :order_ref')
                 ->setParameter('order_ref', '%' . $filter->getOrderRef() . '%');
         }
         if ($filter->getProductSearch() !== null) {
-            $select->where('(pv.title LIKE :product_search or p.code like :product_search')
+            $select->andWhere('(pv.title LIKE :product_search or p.code like :product_search')
                 ->setParameter('product_search', '%' . $filter->getProductSearch() . '%');
         }
 
