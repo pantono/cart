@@ -2,3 +2,5 @@ ShoppingCart:
   class: Pantono\Cart\ShoppingCart
 Orders:
   class: Pantono\Cart\Orders
+SavedCarts:
+  class: Pantono\Cart\SavedCarts
