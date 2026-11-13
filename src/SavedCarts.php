@@ -4,11 +4,11 @@ namespace Pantono\Cart;
 
 use Pantono\Cart\Repository\SavedCartsRepository;
 use Pantono\Hydrator\Hydrator;
-use League\Container\Event\EventDispatcher;
 use Pantono\Cart\Model\SavedCart;
 use Pantono\Cart\Event\PreSavedCartSaveEvent;
 use Pantono\Cart\Event\PostSavedCartSaveEvent;
 use Pantono\Cart\Filter\SavedCartFilter;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 
 class SavedCarts
 {
