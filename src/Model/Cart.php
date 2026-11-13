@@ -281,7 +281,7 @@ class Cart implements SavableInterface
     {
         foreach ($this->getItems() as $item) {
             if ($item->getProduct()->getId() === $product->getId()) {
-                if ($item->getQuantity() + $quantity > $product->getStockHolding()) {
+                if ($quantity > $product->getStockHolding()) {
                     /**
                      * Don't update quantity if an item will be out of stock
                      */
