@@ -9,7 +9,7 @@ use Pantono\Contracts\Attributes\FieldName;
 use Pantono\Contracts\Application\Interfaces\SavableInterface;
 use Pantono\Database\Traits\SavableModel;
 
-#[DatabaseTable('saved_cart_item')]
+#[DatabaseTable('cart_saved_item')]
 class SavedCartItem implements SavableInterface
 {
     use SavableModel;
